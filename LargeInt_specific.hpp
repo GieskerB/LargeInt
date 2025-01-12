@@ -60,28 +60,32 @@ class LargeInt<8> {
 public:
     uint8_t m_value;
     bool m_overflown, m_underflown;
-    branch_side_t c_branch_side;
+    const branch_side_t c_branch_side;
 
     LargeInt<16> *p_parent;
     LargeInt<8> *p_left, *p_right;
 
 
-    LargeInt(uint8_t, LargeInt<16> *, branch_side_t);
+    LargeInt(uint8_t, branch_side_t);
 
     static LargeInt<8> *assent(branch_side_t, branch_side_t);
 
     LargeInt<8> *decent(branch_side_t, bool);
 
-    void initialize_neighbors();
+    void initialize_pointers(LargeInt<16>*);
 
-    uint8_t get_upper_bits(uint8_t, branch_side_t, uint16_t) const;
+    [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t, uint16_t) const;
 
-    uint8_t get_lower_bits(uint8_t, branch_side_t, uint16_t) const;
+    [[nodiscard]] uint8_t get_lower_bits(uint8_t, branch_side_t, uint16_t) const;
 
 public:
     LargeInt();
 
-    static LargeInt<8> create_instance(uint8_t = 0);
+    LargeInt(uint8_t);
+
+    LargeInt(const LargeInt<8> &);
+
+    LargeInt(const LargeInt<8> &&);
 
     bool was_overflow();
 
@@ -116,11 +120,20 @@ public:
  * +------------+
  */
 
-LargeInt<8>::LargeInt() : LargeInt{0, nullptr, branch_side_t::NONE} {}
+LargeInt<8>::LargeInt() : LargeInt{0} {}
 
-LargeInt<8>::LargeInt(uint8_t init_value, LargeInt<16> *parent_ptr, branch_side_t b_side)
+
+LargeInt<8>::LargeInt(uint8_t init_value) : LargeInt(init_value,branch_side_t::ROOT) {};
+
+LargeInt<8>::LargeInt(uint8_t init_value, branch_side_t b_side)
         : m_value{init_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
-          p_parent{parent_ptr}, c_branch_side{b_side} {}
+          p_parent{nullptr}, c_branch_side{b_side} {}
+
+// TODO p_left, p_right
+LargeInt<8>::LargeInt(const LargeInt<8> &copy)
+        : m_value{copy.m_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
+          p_parent{nullptr}, c_branch_side{copy.c_branch_side} {}
+
 
 /*
  * +----------------------+
@@ -136,7 +149,8 @@ LargeInt<8> *LargeInt<8>::decent(branch_side_t, bool) {
     return this;
 }
 
-void LargeInt<8>::initialize_neighbors() {
+void LargeInt<8>::initialize_pointers(LargeInt<16>* parent) {
+    p_parent = parent;
     if (p_parent != nullptr) {
         p_left = p_parent->get_brother(c_branch_side, branch_side_t::LEFT);
         p_right = p_parent->get_brother(c_branch_side, branch_side_t::RIGHT);
@@ -148,7 +162,7 @@ uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, branch_side_t direction, 
     static constexpr std::array<uint8_t, 8> bitmap_lookup{0b10000000, 0b11000000, 0b11100000, 0b11110000,
                                                           0b11111000, 0b11111100, 0b11111110, 0b11111111};
 
-    if (direction == branch_side_t::NONE) {
+    if (direction == branch_side_t::ROOT) {
         throw std::runtime_error("Can not determine brother in direction NONE");
     }
 
@@ -169,7 +183,7 @@ uint8_t LargeInt<8>::get_lower_bits(uint8_t num_upper, branch_side_t direction, 
     static constexpr std::array<uint8_t, 8> bitmap_lookup{0b00000001, 0b00000011, 0b00000111, 0b00001111,
                                                           0b00011111, 0b00111111, 0b01111111, 0b11111111};
 
-    if (direction == branch_side_t::NONE) {
+    if (direction == branch_side_t::ROOT) {
         throw std::runtime_error("Can not determine brother in direction NONE");
     }
 
@@ -196,18 +210,6 @@ bool LargeInt<8>::was_underflow() {
     const bool tmp = m_underflown;
     m_underflown = false;
     return tmp;
-}
-
-/*
- * +-----------------------------+
- * |Static methods implementation|
- * +-----------------------------+
- */
-
-LargeInt<8> LargeInt<8>::create_instance(uint8_t init_value) {
-    LargeInt<8> instance{init_value, nullptr, branch_side_t::NONE};
-    instance.initialize_neighbors();
-    return instance;
 }
 
 /*
@@ -277,7 +279,9 @@ LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
     if (shift == 0) {
         return *this;
     } else if (shift < 8) {
+        std::cerr << +m_value;
         m_value <<= shift;
+        std::cerr << "->" << +m_value << "\n";
         m_value |= p_right == nullptr ? 0 : p_right->get_upper_bits(shift_mod8, branch_side_t::RIGHT, 0);;
     } else if (shift_mod8 == 8) {
         m_value = p_right == nullptr ? 0 : p_right->get_upper_bits(shift_mod8, branch_side_t::RIGHT, shift / 8 - 1);
