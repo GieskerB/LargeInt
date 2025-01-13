@@ -69,47 +69,31 @@ public:
     LargeInt(uint8_t, branch_side_t);
 
     static LargeInt<8> *assent(branch_side_t, branch_side_t);
-
     LargeInt<8> *decent(branch_side_t, bool);
-
-    void initialize_pointers(LargeInt<16>*);
-
+    void initialize_pointers(LargeInt<16> *);
     [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t, uint16_t) const;
-
     [[nodiscard]] uint8_t get_lower_bits(uint8_t, branch_side_t, uint16_t) const;
 
 public:
     LargeInt();
-
     LargeInt(uint8_t);
-
     LargeInt(const LargeInt<8> &);
 
-    LargeInt(const LargeInt<8> &&);
-
     bool was_overflow();
-
     bool was_underflow();
 
 
-    LargeInt operator+(const LargeInt<8> &) const;
-
-    LargeInt &operator+=(const LargeInt<8> &);
-
-    LargeInt operator-(const LargeInt<8> &) const;
-
-    LargeInt &operator-=(const LargeInt<8> &);
-
+    LargeInt<8> operator+(const LargeInt<8> &) const;
+    LargeInt<8> &operator+=(const LargeInt<8> &);
+    LargeInt<8> operator-(const LargeInt<8> &) const;
+    LargeInt<8> &operator-=(const LargeInt<8> &);
     LargeInt<16> operator*(const LargeInt<8> &) const;
-
     LargeInt<8> &operator*=(const LargeInt<8> &);
+    LargeInt<8> operator<<(uint16_t) const;
+    LargeInt<8> &operator<<=(uint16_t);
 
-    LargeInt operator<<(uint16_t) const;
-
-    LargeInt &operator<<=(uint16_t);
-
+    LargeInt<8>& operator=(const LargeInt&);
     bool operator==(const LargeInt<8> &) const;
-
     std::strong_ordering operator<=>(const LargeInt<8> &) const;
 
 };
@@ -123,7 +107,7 @@ public:
 LargeInt<8>::LargeInt() : LargeInt{0} {}
 
 
-LargeInt<8>::LargeInt(uint8_t init_value) : LargeInt(init_value,branch_side_t::ROOT) {};
+LargeInt<8>::LargeInt(uint8_t init_value) : LargeInt(init_value, branch_side_t::ROOT) {}
 
 LargeInt<8>::LargeInt(uint8_t init_value, branch_side_t b_side)
         : m_value{init_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
@@ -149,7 +133,7 @@ LargeInt<8> *LargeInt<8>::decent(branch_side_t, bool) {
     return this;
 }
 
-void LargeInt<8>::initialize_pointers(LargeInt<16>* parent) {
+void LargeInt<8>::initialize_pointers(LargeInt<16> *parent) {
     p_parent = parent;
     if (p_parent != nullptr) {
         p_left = p_parent->get_brother(c_branch_side, branch_side_t::LEFT);
@@ -295,6 +279,18 @@ LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
     if (p_right != nullptr) {
         *p_right <<= shift;
     }
+
+    return *this;
+}
+
+LargeInt<8> &LargeInt<8>::operator=(const LargeInt<8> & copy) {
+    m_value = copy.m_value;
+    m_overflown = copy.m_overflown;
+    m_underflown = copy.m_underflown;
+    const_cast<branch_side_t&>(c_branch_side) = copy.c_branch_side;
+    p_parent = nullptr;
+    p_left = nullptr;
+    p_right = nullptr;
 
     return *this;
 }

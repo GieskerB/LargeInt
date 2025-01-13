@@ -21,48 +21,32 @@ public:
 
 
     LargeInt(uint8_t, branch_side_t);
-
-    LargeInt(LargeInt<N / 2> &);
-
+    LargeInt(const LargeInt<N / 2> &);
     LargeInt<8> *assent(branch_side_t, branch_side_t);
-
     LargeInt<8> *decent(branch_side_t, bool);
-
     void initialize_pointers(LargeInt<2 * N> * = nullptr);
 
 public:
     LargeInt();
-
     LargeInt(uint8_t);
-
     LargeInt(const LargeInt &);
-
     LargeInt(const LargeInt &&);
 
     LargeInt<8> *get_brother(branch_side_t, branch_side_t);
-
     bool was_overflow();
-
     bool was_underflow();
 
     LargeInt<N> operator+(const LargeInt<N> &) const;
-
     LargeInt<N> &operator+=(const LargeInt<N> &);
-
     LargeInt<N> operator-(const LargeInt<N> &) const;
-
     LargeInt<N> &operator-=(const LargeInt<N> &);
-
     LargeInt<2 * N> operator*(const LargeInt<N> &) const;
-
     LargeInt<N> &operator*=(const LargeInt<N> &);
-
     LargeInt<N> operator<<(uint16_t) const;
-
     LargeInt<N> &operator<<=(uint16_t);
 
+    LargeInt<N> &operator=(const LargeInt<N> &);
     bool operator==(const LargeInt<N> &) const;
-
     std::strong_ordering operator<=>(const LargeInt<N> &) const;
 };
 
@@ -106,12 +90,11 @@ LargeInt<N>::LargeInt(const LargeInt<N> &copy): m_upper{copy.m_upper}, m_lower{c
 }
 
 template<uint16_t N>
-LargeInt<N>::LargeInt(LargeInt<N / 2> &lower):  m_upper{0, this, branch_side_t::LEFT}, m_lower{lower},
+LargeInt<N>::LargeInt(const LargeInt<N / 2> &lower):  m_upper{0, branch_side_t::LEFT}, m_lower{lower},
                                                 m_overflown{false},
                                                 m_underflown{false}, c_branch_side{branch_side_t::ROOT},
                                                 p_parent{nullptr} {
-    m_lower.c_branch_side = branch_side_t::RIGHT;
-    m_lower.p_parent = this;
+    initialize_pointers(nullptr);
 }
 
 /*
@@ -199,7 +182,7 @@ LargeInt<N> &LargeInt<N>::operator+=(const LargeInt<N> &other) {
     m_upper += other.m_upper;
 
     if (m_lower.was_overflow()) {
-        m_upper += LargeInt<N / 2>::create_instance(1);
+        m_upper += 1;
     }
     m_overflown = m_upper.was_overflow();
 
@@ -220,7 +203,7 @@ LargeInt<N> &LargeInt<N>::operator-=(const LargeInt<N> &other) {
 
     if (m_lower.was_underflow()) {
         std::cout << "underflow " << N << "\n";
-        m_upper -= LargeInt<N / 2>::create_instance(1);
+        m_upper -= 1;
     }
     m_underflown = m_upper.was_underflow();
 
@@ -233,23 +216,22 @@ LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
 
     const LargeInt<N> upper_times_upper = m_upper * other.m_upper;
     const LargeInt<N> lower_times_lower = m_lower * other.m_lower;
-    LargeInt<N> special_product = (m_upper + m_lower) * (other.m_upper + other.m_lower);
+    LargeInt<2 * N> special_product{(m_upper + m_lower) * (other.m_upper + other.m_lower)};
 
     LargeInt<2 * N> result{};
     result.m_upper = upper_times_upper;
     result.m_lower = lower_times_lower;
+    result.initialize_pointers();
 
-    LargeInt<2 * N> tmp{special_product};
-    tmp.initialize_pointers();
-
-    tmp <<= N / 2;
-    result += tmp;
+    special_product -= lower_times_lower;
+    special_product -= upper_times_upper;
+    special_product <<= N / 2;
+    result += special_product;
     return result;
 }
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator*=(const LargeInt<N> &other) {
-//    LargeInt<2 * N> res = ;
     *this = (*this * other).m_lower;
     return *this;
 }
@@ -265,6 +247,23 @@ LargeInt<N> LargeInt<N>::operator<<(uint16_t shift) const {
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator<<=(uint16_t shift) {
     m_upper <<= shift;
+    return *this;
+}
+
+
+template<uint16_t N>
+LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &copy) {
+//    LargeInt<N / 2> m_upper, m_lower;
+//    bool m_overflown, m_underflown;
+//    const branch_side_t c_branch_side;
+//
+//    LargeInt<2 * N> *p_parent;
+    m_upper = copy.m_upper;
+    m_lower = copy.m_lower;
+    m_overflown = copy.m_overflown;
+    m_underflown = copy.m_underflown;
+    const_cast<branch_side_t &>(c_branch_side) = copy.c_branch_side;
+    initialize_pointers(nullptr);
     return *this;
 }
 

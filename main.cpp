@@ -5,8 +5,8 @@ int main() {
 
 //    LargeInt<512> test{};
 
-    LargeInt<16> a = LargeInt<16>{5};
-    LargeInt<16> b = LargeInt<16>{30};
+    LargeInt<16> a = LargeInt<16>{200};
+    LargeInt<16> b = LargeInt<16>{10};
 
     std::cout << a << "\n";
     std::cout << b << "\n";
@@ -19,9 +19,10 @@ int main() {
 //    std::cout << "6: " << (a << 6) << "\n";
 //    std::cout << "8: " << (a << 8) << "\n";
 //    std::cout << "10: " << (a << 10) << "\n";
-    a *= b;
+//    a *= b;
 
-    std::cout << a<< "\n";
+    std::cout << (a *= 2) << "\n";
+
 
     return 0;
 }
