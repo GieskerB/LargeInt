@@ -1,5 +1,5 @@
 //
-// Created by bjarn on 27.12.2024.
+// Including this header into your program to add every feature the LargeInt Class provides to your project.
 //
 
 #ifndef TESTING_LARGEINT_HPP
@@ -10,26 +10,23 @@
 
 // =====================================================================================================================
 
-//TODO PRINTING
-
-
-std::ostream &operator<<(std::ostream &os, LargeInt<8> large_int) {
+std::ostream &operator<<(std::ostream &os, const LargeInt<8>& large_int) {
     os << +large_int.m_value;
     return os;
 }
 
-std::ostream &operator<<(std::ostream &os, LargeInt<16> large_int) {
+std::ostream &operator<<(std::ostream &os, const LargeInt<16>& large_int) {
     os << (+large_int.m_upper.m_value << 8) + +large_int.m_lower.m_value;
     return os;
 }
 
-std::ostream &operator<<(std::ostream &os, LargeInt<32> large_int) {
+std::ostream &operator<<(std::ostream &os, const LargeInt<32>& large_int) {
     os << (+large_int.m_upper.m_upper.m_value << 24) + (+large_int.m_upper.m_lower.m_value << 16) +
           (+large_int.m_lower.m_upper.m_value << 8) + +large_int.m_lower.m_lower.m_value;
     return os;
 }
 
-std::ostream &operator<<(std::ostream &os, LargeInt<64> large_int) {
+std::ostream &operator<<(std::ostream &os, const LargeInt<64>& large_int) {
     os << ((unsigned long long) large_int.m_upper.m_upper.m_upper.m_value << 56) +
           ((unsigned long long) large_int.m_upper.m_upper.m_lower.m_value << 48) +
           ((unsigned long long) large_int.m_upper.m_lower.m_upper.m_value << 40) +

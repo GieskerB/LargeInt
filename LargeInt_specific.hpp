@@ -10,8 +10,7 @@
 
 #include "LargeInt_general.hpp"
 
-/**
- * Base case Class if user chooses a wrong number of bits.
+/*
  * Will only throw exceptions, when used. Necessary for compiler statisfaction with recursive design.
  */
 template<>
@@ -24,7 +23,9 @@ LargeInt<0>::LargeInt() {
     throw std::runtime_error("LargeInt in only supports a perfect power of 2 number of Bits.");
 }
 
-
+/*
+ * Will only throw exceptions, when used. Necessary for compiler statisfaction with recursive design.
+ */
 template<>
 class LargeInt<1 << 15> {
 public:
@@ -48,23 +49,44 @@ LargeInt<8> *LargeInt<1 << 15>::decent(branch_side_t, bool) {
 }
 
 
+// =====================================================================================================================
+
+
+template<uint16_t N>
+class LargeInt;
+
 
 // =====================================================================================================================
 
 
 /**
- * Smalles unit, that will be stored is a single byte, 8 bits.
+ * LargeInts recursive design needs a smallest value to stop at. Choosing N = 8 aka. only a
+ * single byte as the smallest value allows to implement every basecase with ease and also
+ * make testing easier. Also this design allows for the use of "small" LargeInts
+ * with 16 and 8 bits in contrast to implementing the basecase with a 32-bit Integer.
  */
 template<>
 class LargeInt<8> {
-public:
+
+    template<uint16_t M>
+    friend class LargeInt;
+
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<8>& large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<16>& large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<32>& large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<64>& large_int);
+
+    /// Stores one single byte of the possibly huge LargeInt instance.
     uint8_t m_value;
+    /// Temporal values used to make addition and subtraction easier.
     bool m_overflown, m_underflown;
+    /// Remembers if instance is the upper or lower part of parent instance.
     const branch_side_t c_branch_side;
 
+    /// For easier traversal in huge LargeInts, an instance stores a pointer to its parent
     LargeInt<16> *p_parent;
+    /// For easier traversal only the LargeInt<8> knows its left and right brother
     LargeInt<8> *p_left, *p_right;
-
 
     LargeInt(uint8_t, branch_side_t);
 
@@ -79,9 +101,9 @@ public:
     LargeInt(uint8_t);
     LargeInt(const LargeInt<8> &);
 
+
     bool was_overflow();
     bool was_underflow();
-
 
     LargeInt<8> operator+(const LargeInt<8> &) const;
     LargeInt<8> &operator+=(const LargeInt<8> &);
@@ -92,7 +114,7 @@ public:
     LargeInt<8> operator<<(uint16_t) const;
     LargeInt<8> &operator<<=(uint16_t);
 
-    LargeInt<8>& operator=(const LargeInt&);
+    LargeInt<8> &operator=(const LargeInt &);
     bool operator==(const LargeInt<8> &) const;
     std::strong_ordering operator<=>(const LargeInt<8> &) const;
 
@@ -283,11 +305,11 @@ LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
     return *this;
 }
 
-LargeInt<8> &LargeInt<8>::operator=(const LargeInt<8> & copy) {
+LargeInt<8> &LargeInt<8>::operator=(const LargeInt<8> &copy) {
     m_value = copy.m_value;
     m_overflown = copy.m_overflown;
     m_underflown = copy.m_underflown;
-    const_cast<branch_side_t&>(c_branch_side) = copy.c_branch_side;
+    const_cast<branch_side_t &>(c_branch_side) = copy.c_branch_side;
     p_parent = nullptr;
     p_left = nullptr;
     p_right = nullptr;

@@ -6,19 +6,44 @@
 #include <limits>
 #include <iostream>
 
+
+// =====================================================================================================================
+
+
 enum class branch_side_t : int8_t {
     LEFT = -1, RIGHT = 1, ROOT = 0
 };
 
+
+// =====================================================================================================================
+
+
+template<uint16_t N>
+class LargeInt;
+
+template<>
+class LargeInt<8>;
+
+
+// =====================================================================================================================
+
+
 template<uint16_t N>
 class LargeInt {
-public:
+
+    template<uint16_t M>
+    friend class LargeInt;
+
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<8>& large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<16>& large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<32>& large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<64>& large_int);
+
     LargeInt<N / 2> m_upper, m_lower;
     bool m_overflown, m_underflown;
     const branch_side_t c_branch_side;
 
     LargeInt<2 * N> *p_parent;
-
 
     LargeInt(uint8_t, branch_side_t);
     LargeInt(const LargeInt<N / 2> &);
@@ -30,7 +55,7 @@ public:
     LargeInt();
     LargeInt(uint8_t);
     LargeInt(const LargeInt &);
-    LargeInt(const LargeInt &&);
+
 
     LargeInt<8> *get_brother(branch_side_t, branch_side_t);
     bool was_overflow();
@@ -202,7 +227,6 @@ LargeInt<N> &LargeInt<N>::operator-=(const LargeInt<N> &other) {
     m_upper -= other.m_upper;
 
     if (m_lower.was_underflow()) {
-        std::cout << "underflow " << N << "\n";
         m_upper -= 1;
     }
     m_underflown = m_upper.was_underflow();
@@ -212,8 +236,6 @@ LargeInt<N> &LargeInt<N>::operator-=(const LargeInt<N> &other) {
 
 template<uint16_t N>
 LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
-    // TODO Karatsuba
-
     const LargeInt<N> upper_times_upper = m_upper * other.m_upper;
     const LargeInt<N> lower_times_lower = m_lower * other.m_lower;
     LargeInt<2 * N> special_product{(m_upper + m_lower) * (other.m_upper + other.m_lower)};
@@ -253,11 +275,6 @@ LargeInt<N> &LargeInt<N>::operator<<=(uint16_t shift) {
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &copy) {
-//    LargeInt<N / 2> m_upper, m_lower;
-//    bool m_overflown, m_underflown;
-//    const branch_side_t c_branch_side;
-//
-//    LargeInt<2 * N> *p_parent;
     m_upper = copy.m_upper;
     m_lower = copy.m_lower;
     m_overflown = copy.m_overflown;
