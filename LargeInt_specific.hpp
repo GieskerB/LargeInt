@@ -111,8 +111,12 @@ public:
     LargeInt<8> &operator-=(const LargeInt<8> &);
     LargeInt<16> operator*(const LargeInt<8> &) const;
     LargeInt<8> &operator*=(const LargeInt<8> &);
+    LargeInt<8> operator/(const LargeInt<8> &) const;
+    LargeInt<8> &operator/=(const LargeInt<8> &);
     LargeInt<8> operator<<(uint16_t) const;
     LargeInt<8> &operator<<=(uint16_t);
+    LargeInt<8> operator>>(uint16_t) const;
+    LargeInt<8> &operator>>=(uint16_t);
 
     LargeInt<8> &operator=(const LargeInt &);
     bool operator==(const LargeInt<8> &) const;
@@ -273,6 +277,17 @@ LargeInt<8> &LargeInt<8>::operator*=(const LargeInt<8> &other) {
     return *this;
 }
 
+LargeInt<8> LargeInt<8>::operator/(const LargeInt<8> &other) const {
+    LargeInt<8> res{*this};
+    res /= other;
+    return res;
+}
+
+LargeInt<8> &LargeInt<8>::operator/=(const LargeInt<8> &other) {
+    m_value /= other.m_value;
+    return *this;
+}
+
 LargeInt<8> LargeInt<8>::operator<<(uint16_t shift) const {
     LargeInt<8> res{*this};
     res <<= shift;
@@ -285,9 +300,7 @@ LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
     if (shift == 0) {
         return *this;
     } else if (shift < 8) {
-        std::cerr << +m_value;
         m_value <<= shift;
-        std::cerr << "->" << +m_value << "\n";
         m_value |= p_right == nullptr ? 0 : p_right->get_upper_bits(shift_mod8, branch_side_t::RIGHT, 0);;
     } else if (shift_mod8 == 8) {
         m_value = p_right == nullptr ? 0 : p_right->get_upper_bits(shift_mod8, branch_side_t::RIGHT, shift / 8 - 1);
@@ -300,6 +313,36 @@ LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
 
     if (p_right != nullptr) {
         *p_right <<= shift;
+    }
+
+    return *this;
+}
+
+LargeInt<8> LargeInt<8>::operator>>(uint16_t shift) const {
+    LargeInt<8> res{*this};
+    res >>= shift;
+    return res;
+}
+
+LargeInt<8> &LargeInt<8>::operator>>=(uint16_t shift) {
+    const uint8_t shift_mod8 = shift == 0 ? 0 : ((shift - 1) % 8) + 1;
+
+    if (shift == 0) {
+        return *this;
+    } else if (shift < 8) {
+        m_value >>= shift;
+        m_value |= p_right == nullptr ? 0 : p_right->get_lower_bits(shift_mod8, branch_side_t::LEFT, 0);;
+    } else if (shift_mod8 == 8) {
+        m_value = p_right == nullptr ? 0 : p_right->get_lower_bits(shift_mod8, branch_side_t::LEFT, shift / 8 - 1);
+    } else {
+        m_value = 0;
+        m_value |=
+                p_right == nullptr ? 0 : p_right->get_upper_bits(8 - shift_mod8, branch_side_t::LEFT, shift / 8 - 1);
+        m_value |= p_right == nullptr ? 0 : p_right->get_lower_bits(shift_mod8, branch_side_t::LEFT, shift / 8);
+    }
+
+    if (p_right != nullptr) {
+        *p_right >>= shift;
     }
 
     return *this;

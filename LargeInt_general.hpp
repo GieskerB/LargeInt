@@ -51,6 +51,9 @@ class LargeInt {
     LargeInt<8> *decent(branch_side_t, bool);
     void initialize_pointers(LargeInt<2 * N> * = nullptr);
 
+    template<uint16_t M>
+    void division_and_conquer(const LargeInt<M>&);
+
 public:
     LargeInt();
     LargeInt(uint8_t);
@@ -67,8 +70,12 @@ public:
     LargeInt<N> &operator-=(const LargeInt<N> &);
     LargeInt<2 * N> operator*(const LargeInt<N> &) const;
     LargeInt<N> &operator*=(const LargeInt<N> &);
+    LargeInt<N> operator/(const LargeInt<N> &) const;
+    LargeInt<N> &operator/=(const LargeInt<N> &);
     LargeInt<N> operator<<(uint16_t) const;
     LargeInt<N> &operator<<=(uint16_t);
+    LargeInt<N> operator>>(uint16_t) const;
+    LargeInt<N> &operator>>=(uint16_t);
 
     LargeInt<N> &operator=(const LargeInt<N> &);
     bool operator==(const LargeInt<N> &) const;
@@ -188,6 +195,18 @@ bool LargeInt<N>::was_underflow() {
     return tmp;
 }
 
+template<uint16_t N> template<uint16_t M>
+void LargeInt<N>::division_and_conquer(const LargeInt<M> & other) {
+    /*
+     * if this < other return 0
+     *
+     * left = m_upper / other
+     * right = m_lower / other
+     *
+     * return concat(left,right)
+     */
+}
+
 /*
  * +-----------------------+
  * |Operator implementation|
@@ -236,8 +255,8 @@ LargeInt<N> &LargeInt<N>::operator-=(const LargeInt<N> &other) {
 
 template<uint16_t N>
 LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
-    const LargeInt<N> upper_times_upper = m_upper * other.m_upper;
-    const LargeInt<N> lower_times_lower = m_lower * other.m_lower;
+    const LargeInt<N>& upper_times_upper = m_upper * other.m_upper;
+    const LargeInt<N>& lower_times_lower = m_lower * other.m_lower;
     LargeInt<2 * N> special_product{(m_upper + m_lower) * (other.m_upper + other.m_lower)};
 
     LargeInt<2 * N> result{};
@@ -259,6 +278,20 @@ LargeInt<N> &LargeInt<N>::operator*=(const LargeInt<N> &other) {
 }
 
 
+template<uint16_t  N>
+LargeInt<N> LargeInt<N>::operator/(const LargeInt<N>& other) const{
+    LargeInt<N> res{*this};
+    res /= other;
+    return res;
+}
+
+// TODO Divide and Conquer with A/B = A_upper / B combined with A_lower/B
+
+template<uint16_t N>
+LargeInt<N>& LargeInt<N>::operator/=(const LargeInt<N> &other) {
+    return *this;
+}
+
 template<uint16_t N>
 LargeInt<N> LargeInt<N>::operator<<(uint16_t shift) const {
     LargeInt<N> res{*this};
@@ -272,9 +305,25 @@ LargeInt<N> &LargeInt<N>::operator<<=(uint16_t shift) {
     return *this;
 }
 
+template<uint16_t N>
+LargeInt<N> LargeInt<N>::operator>>(uint16_t shift) const {
+    LargeInt<N> res{*this};
+    res >>= shift;
+    return res;
+}
+
+template<uint16_t N>
+LargeInt<N> &LargeInt<N>::operator>>=(uint16_t shift) {
+    m_lower >>= shift;
+    return *this;
+}
+
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &copy) {
+    if(&copy == this) {
+        return *this;
+    }
     m_upper = copy.m_upper;
     m_lower = copy.m_lower;
     m_overflown = copy.m_overflown;

@@ -21,7 +21,7 @@ int main() {
 //    std::cout << "10: " << (a << 10) << "\n";
     a *= b;
 
-    std::cout << (a *= b) << "\n";
+    std::cout << a << "\n";
 
 
     return 0;
