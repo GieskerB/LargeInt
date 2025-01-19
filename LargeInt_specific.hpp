@@ -69,12 +69,13 @@ template<>
 class LargeInt<8> {
 
     template<uint16_t M>
-    friend class LargeInt;
+    friend
+    class LargeInt;
 
-    friend std::ostream &operator<<(std::ostream &os, const LargeInt<8>& large_int);
-    friend std::ostream &operator<<(std::ostream &os, const LargeInt<16>& large_int);
-    friend std::ostream &operator<<(std::ostream &os, const LargeInt<32>& large_int);
-    friend std::ostream &operator<<(std::ostream &os, const LargeInt<64>& large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<8> &large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<16> &large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<32> &large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<64> &large_int);
 
     /// Stores one single byte of the possibly huge LargeInt instance.
     uint8_t m_value;
@@ -101,26 +102,47 @@ public:
     LargeInt(uint8_t);
     LargeInt(const LargeInt<8> &);
 
-
     bool was_overflow();
     bool was_underflow();
 
+    // arithmetic
+    LargeInt<8> operator+() const;
+    LargeInt<8> operator-() const;
     LargeInt<8> operator+(const LargeInt<8> &) const;
-    LargeInt<8> &operator+=(const LargeInt<8> &);
     LargeInt<8> operator-(const LargeInt<8> &) const;
-    LargeInt<8> &operator-=(const LargeInt<8> &);
     LargeInt<16> operator*(const LargeInt<8> &) const;
-    LargeInt<8> &operator*=(const LargeInt<8> &);
     LargeInt<8> operator/(const LargeInt<8> &) const;
-    LargeInt<8> &operator/=(const LargeInt<8> &);
+    LargeInt<8> operator%(const LargeInt<8> &) const;
+    LargeInt<8> operator~() const;
+    LargeInt<8> operator&(const LargeInt<8> &) const;
+    LargeInt<8> operator|(const LargeInt<8> &) const;
+    LargeInt<8> operator^(const LargeInt<8> &) const;
     LargeInt<8> operator<<(uint16_t) const;
-    LargeInt<8> &operator<<=(uint16_t);
     LargeInt<8> operator>>(uint16_t) const;
+
+    // assignment
+    LargeInt<8> &operator=(const LargeInt &);
+    LargeInt<8> &operator+=(const LargeInt<8> &);
+    LargeInt<8> &operator-=(const LargeInt<8> &);
+    LargeInt<8> &operator*=(const LargeInt<8> &);
+    LargeInt<8> &operator/=(const LargeInt<8> &);
+    LargeInt<8> &operator%=(const LargeInt<8> &);
+    LargeInt<8> &operator&=(const LargeInt<8> &);
+    LargeInt<8> &operator|=(const LargeInt<8> &);
+    LargeInt<8> &operator^=(const LargeInt<8> &);
+    LargeInt<8> &operator<<=(uint16_t);
     LargeInt<8> &operator>>=(uint16_t);
 
-    LargeInt<8> &operator=(const LargeInt &);
+    // comparison
     bool operator==(const LargeInt<8> &) const;
     std::strong_ordering operator<=>(const LargeInt<8> &) const;
+
+    // in- / decrement
+    LargeInt<8> &operator++();
+    LargeInt<8> &operator--();
+    LargeInt<8> &operator++(int);
+    LargeInt<8> &operator--(int);
+
 
 };
 
@@ -228,144 +250,10 @@ bool LargeInt<8>::was_underflow() {
  * +-----------------------+
  */
 
-LargeInt<8> LargeInt<8>::operator+(const LargeInt<8> &other) const {
-    LargeInt<8> res{*this};
-    res += other;
-    return res;
-}
+#include "operators/specific/arithmetic.hpp"
+#include "operators/specific/assignment.hpp"
+#include "operators/specific/comparison.hpp"
+#include "operators/specific/in-de-crement.hpp"
 
-LargeInt<8> &LargeInt<8>::operator+=(const LargeInt<8> &other) {
-    /*
-     * https://stackoverflow.com/questions/199333/how-do-i-detect-unsigned-integer-overflow
-     */
-    if (other.m_value > 0 && m_value > std::numeric_limits<uint8_t>::max() - other.m_value) {
-        // `m_value + other.m_value` would overflow
-        m_overflown = true;
-    }
-    m_value += other.m_value;
-
-    return *this;
-}
-
-LargeInt<8> LargeInt<8>::operator-(const LargeInt<8> &other) const {
-    LargeInt<8> res{*this};
-    res -= other;
-    return res;
-}
-
-LargeInt<8> &LargeInt<8>::operator-=(const LargeInt<8> &other) {
-    if (other.m_value > 0 && m_value < std::numeric_limits<uint8_t>::min() + other.m_value) {
-        // `m_value - other.m_value` would underflow
-        m_underflown = true;
-    }
-    m_value -= other.m_value;
-
-    return *this;
-}
-
-LargeInt<16> LargeInt<8>::operator*(const LargeInt<8> &other) const {
-    uint16_t mult_res = static_cast<uint16_t>(m_value) * static_cast<uint16_t>(other.m_value);
-    LargeInt<16> res;
-    res.m_upper.m_value = mult_res >> 8;
-    res.m_lower.m_value = mult_res;
-    return res;
-}
-
-LargeInt<8> &LargeInt<8>::operator*=(const LargeInt<8> &other) {
-    auto res = *this * other;
-    m_value = res.m_lower.m_value;
-    return *this;
-}
-
-LargeInt<8> LargeInt<8>::operator/(const LargeInt<8> &other) const {
-    LargeInt<8> res{*this};
-    res /= other;
-    return res;
-}
-
-LargeInt<8> &LargeInt<8>::operator/=(const LargeInt<8> &other) {
-    m_value /= other.m_value;
-    return *this;
-}
-
-LargeInt<8> LargeInt<8>::operator<<(uint16_t shift) const {
-    LargeInt<8> res{*this};
-    res <<= shift;
-    return res;
-}
-
-LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
-    const uint8_t shift_mod8 = shift == 0 ? 0 : ((shift - 1) % 8) + 1;
-
-    if (shift == 0) {
-        return *this;
-    } else if (shift < 8) {
-        m_value <<= shift;
-        m_value |= p_right == nullptr ? 0 : p_right->get_upper_bits(shift_mod8, branch_side_t::RIGHT, 0);;
-    } else if (shift_mod8 == 8) {
-        m_value = p_right == nullptr ? 0 : p_right->get_upper_bits(shift_mod8, branch_side_t::RIGHT, shift / 8 - 1);
-    } else {
-        m_value = 0;
-        m_value |=
-                p_right == nullptr ? 0 : p_right->get_lower_bits(8 - shift_mod8, branch_side_t::RIGHT, shift / 8 - 1);
-        m_value |= p_right == nullptr ? 0 : p_right->get_upper_bits(shift_mod8, branch_side_t::RIGHT, shift / 8);
-    }
-
-    if (p_right != nullptr) {
-        *p_right <<= shift;
-    }
-
-    return *this;
-}
-
-LargeInt<8> LargeInt<8>::operator>>(uint16_t shift) const {
-    LargeInt<8> res{*this};
-    res >>= shift;
-    return res;
-}
-
-LargeInt<8> &LargeInt<8>::operator>>=(uint16_t shift) {
-    const uint8_t shift_mod8 = shift == 0 ? 0 : ((shift - 1) % 8) + 1;
-
-    if (shift == 0) {
-        return *this;
-    } else if (shift < 8) {
-        m_value >>= shift;
-        m_value |= p_right == nullptr ? 0 : p_right->get_lower_bits(shift_mod8, branch_side_t::LEFT, 0);;
-    } else if (shift_mod8 == 8) {
-        m_value = p_right == nullptr ? 0 : p_right->get_lower_bits(shift_mod8, branch_side_t::LEFT, shift / 8 - 1);
-    } else {
-        m_value = 0;
-        m_value |=
-                p_right == nullptr ? 0 : p_right->get_upper_bits(8 - shift_mod8, branch_side_t::LEFT, shift / 8 - 1);
-        m_value |= p_right == nullptr ? 0 : p_right->get_lower_bits(shift_mod8, branch_side_t::LEFT, shift / 8);
-    }
-
-    if (p_right != nullptr) {
-        *p_right >>= shift;
-    }
-
-    return *this;
-}
-
-LargeInt<8> &LargeInt<8>::operator=(const LargeInt<8> &copy) {
-    m_value = copy.m_value;
-    m_overflown = copy.m_overflown;
-    m_underflown = copy.m_underflown;
-    const_cast<branch_side_t &>(c_branch_side) = copy.c_branch_side;
-    p_parent = nullptr;
-    p_left = nullptr;
-    p_right = nullptr;
-
-    return *this;
-}
-
-bool LargeInt<8>::operator==(const LargeInt<8> &other) const {
-    return std::is_eq(m_value <=> other.m_value);
-}
-
-std::strong_ordering LargeInt<8>::operator<=>(const LargeInt<8> &other) const {
-    return m_value <=> other.m_value;
-}
 
 #endif //TESTING_LARGEINT_SPECIFIC_HPP

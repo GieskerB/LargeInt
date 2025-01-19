@@ -72,6 +72,7 @@ public:
     LargeInt<N> &operator*=(const LargeInt<N> &);
     LargeInt<N> operator/(const LargeInt<N> &) const;
     LargeInt<N> &operator/=(const LargeInt<N> &);
+
     LargeInt<N> operator<<(uint16_t) const;
     LargeInt<N> &operator<<=(uint16_t);
     LargeInt<N> operator>>(uint16_t) const;
