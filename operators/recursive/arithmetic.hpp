@@ -2,8 +2,8 @@
 // Created by bjarn on 19.01.2025.
 //
 
-#ifndef LARGEINT_GENERAL_ARITHMETIC_HPP
-#define LARGEINT_GENERAL_ARITHMETIC_HPP
+#ifndef LARGEINT_RECURSIVE_ARITHMETIC_HPP
+#define LARGEINT_RECURSIVE_ARITHMETIC_HPP
 
 // TODO 13
 // Unary +
@@ -67,4 +67,4 @@ LargeInt<N> LargeInt<N>::operator>>(uint16_t shift) const {
     return res;
 }
 
-#endif //LARGEINT_GENERAL_ARITHMETIC_HPP
+#endif //LARGEINT_RECURSIVE_ARITHMETIC_HPP

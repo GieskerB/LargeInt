@@ -5,8 +5,8 @@
 #ifndef TESTING_LARGEINT_HPP
 #define TESTING_LARGEINT_HPP
 
-#include "LargeInt_general.hpp"
-#include "LargeInt_specific.hpp"
+#include "LargeInt_recursive.hpp"
+#include "LargeInt_atomic.hpp"
 
 // =====================================================================================================================
 

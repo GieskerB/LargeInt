@@ -2,8 +2,8 @@
 // Created by bjarn on 19.01.2025.
 //
 
-#ifndef LARGEINT_SPECIFIC_ARITHMETIC_HPP
-#define LARGEINT_SPECIFIC_ARITHMETIC_HPP
+#ifndef LARGEINT_ATOMIC_ARITHMETIC_HPP
+#define LARGEINT_ATOMIC_ARITHMETIC_HPP
 
 LargeInt<8> LargeInt<8>::operator+() const {
     LargeInt<8> res{*this};
@@ -83,4 +83,4 @@ LargeInt<8> LargeInt<8>::operator>>(uint16_t shift) const {
     return res;
 }
 
-#endif //LARGEINT_SPECIFIC_ARITHMETIC_HPP
+#endif //LARGEINT_ATOMIC_ARITHMETIC_HPP

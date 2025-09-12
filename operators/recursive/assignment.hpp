@@ -2,8 +2,8 @@
 // Created by bjarn on 19.01.2025.
 //
 
-#ifndef LARGEINT_GENERAL_ASSIGNMENT_HPP
-#define LARGEINT_GENERAL_ASSIGNMENT_HPP
+#ifndef LARGEINT_RECURSIVE_ASSIGNMENT_HPP
+#define LARGEINT_RECURSIVE_ASSIGNMENT_HPP
 
 // TODO 11
 // %= &= |= ^=
@@ -75,4 +75,4 @@ LargeInt<N> &LargeInt<N>::operator>>=(uint16_t shift) {
 }
 
 
-#endif //LARGEINT_GENERAL_ASSIGNMENT_HPP
+#endif //LARGEINT_RECURSIVE_ASSIGNMENT_HPP

@@ -189,9 +189,9 @@ bool LargeInt<N>::was_underflow() {
  * +-----------------------+
  */
 
-#include "operators/general/arithmetic.hpp"
-#include "operators/general/assignment.hpp"
-#include "operators/general/comparison.hpp"
-#include "operators/general/in-de-crement.hpp"
+#include "operators/recursive/arithmetic.hpp"
+#include "operators/recursive/assignment.hpp"
+#include "operators/recursive/comparison.hpp"
+#include "operators/recursive/in-de-crement.hpp"
 
 #endif //TESTING_LARGEINT_GENERAL_HPP

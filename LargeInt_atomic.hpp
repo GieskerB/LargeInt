@@ -6,7 +6,7 @@
 #include <array>
 #include <bitset>
 
-#include "LargeInt_general.hpp"
+#include "LargeInt_recursive.hpp"
 
 /*
  * Will only throw exceptions, when used. Necessary for compiler statisfaction with recursive design.
@@ -250,9 +250,9 @@ bool LargeInt<8>::was_underflow() {
  * +-----------------------+
  */
 
-#include "operators/specific/arithmetic.hpp"
-#include "operators/specific/assignment.hpp"
-#include "operators/specific/comparison.hpp"
-#include "operators/specific/in-de-crement.hpp"
+#include "operators/atomic/arithmetic.hpp"
+#include "operators/atomic/assignment.hpp"
+#include "operators/atomic/comparison.hpp"
+#include "operators/atomic/in-de-crement.hpp"
 
 #endif //TESTING_LARGEINT_SPECIFIC_HPP

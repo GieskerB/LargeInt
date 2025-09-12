@@ -2,8 +2,8 @@
 // Created by bjarn on 19.01.2025.
 //
 
-#ifndef LARGEINT_SPECIFIC_ASSIGNMENT_HPP
-#define LARGEINT_SPECIFIC_ASSIGNMENT_HPP
+#ifndef LARGEINT_ATOMIC_ASSIGNMENT_HPP
+#define LARGEINT_ATOMIC_ASSIGNMENT_HPP
 
 LargeInt<8> &LargeInt<8>::operator=(const LargeInt<8> &copy) {
     m_value = copy.m_value;
@@ -125,4 +125,4 @@ LargeInt<8> &LargeInt<8>::operator>>=(uint16_t shift) {
     return *this;
 }
 
-#endif //LARGEINT_SPECIFIC_ASSIGNMENT_HPP
+#endif //LARGEINT_ATOMIC_ASSIGNMENT_HPP

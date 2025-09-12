@@ -2,8 +2,8 @@
 // Created by bjarn on 19.01.2025.
 //
 
-#ifndef LARGEINT_GENERAL_COMPARISON_HPP
-#define LARGEINT_GENERAL_COMPARISON_HPP
+#ifndef LARGEINT_RECURSIVE_COMPARISON_HPP
+#define LARGEINT_RECURSIVE_COMPARISON_HPP
 
 // TODO 6 -> 2
 
@@ -21,4 +21,4 @@ std::strong_ordering LargeInt<N>::operator<=>(const LargeInt<N> &other) const {
     return ordering;
 }
 
-#endif //LARGEINT_GENERAL_COMPARISON_HPP
+#endif //LARGEINT_RECURSIVE_COMPARISON_HPP
