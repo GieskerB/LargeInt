@@ -58,9 +58,9 @@ LargeInt<8> &LargeInt<8>::operator/=(const LargeInt<8> &other) {
 LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
     const uint8_t shift_mod8 = shift == 0 ? 0 : ((shift - 1) % 8) + 1;
 
-    if (shift == 0) {
-        return *this;
-    } else if (shift < 8) {
+    if (shift == 0) return *this;
+
+    if (shift < 8) {
         m_value <<= shift;
         m_value |= p_right == nullptr ? 0 : p_right->get_upper_bits(shift_mod8, branch_side_t::RIGHT, 0);;
     } else if (shift_mod8 == 8) {

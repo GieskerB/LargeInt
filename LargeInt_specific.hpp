@@ -3,8 +3,6 @@
 
 #include <cstdint>
 #include <stdexcept>
-#include <limits>
-#include <iostream>
 #include <array>
 #include <bitset>
 
@@ -69,8 +67,7 @@ template<>
 class LargeInt<8> {
 
     template<uint16_t M>
-    friend
-    class LargeInt;
+    friend class LargeInt;
 
     friend std::ostream &operator<<(std::ostream &os, const LargeInt<8> &large_int);
     friend std::ostream &operator<<(std::ostream &os, const LargeInt<16> &large_int);
@@ -93,7 +90,11 @@ class LargeInt<8> {
 
     static LargeInt<8> *assent(branch_side_t, branch_side_t);
     LargeInt<8> *decent(branch_side_t, bool);
+
     void initialize_pointers(LargeInt<16> *);
+
+    [[nodiscard]] uint16_t get_msb_index(bool = false) const;
+
     [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t, uint16_t) const;
     [[nodiscard]] uint8_t get_lower_bits(uint8_t, branch_side_t, uint16_t) const;
 
@@ -143,7 +144,9 @@ public:
     LargeInt<8> &operator++(int);
     LargeInt<8> &operator--(int);
 
-
+    explicit operator uint64_t() const {
+        return m_value;
+    }
 };
 
 /*
@@ -181,22 +184,43 @@ LargeInt<8> *LargeInt<8>::decent(branch_side_t, bool) {
     return this;
 }
 
+
+
 void LargeInt<8>::initialize_pointers(LargeInt<16> *parent) {
+
     p_parent = parent;
     if (p_parent != nullptr) {
-        p_left = p_parent->get_brother(c_branch_side, branch_side_t::LEFT);
-        p_right = p_parent->get_brother(c_branch_side, branch_side_t::RIGHT);
+        if (p_last_leaf != nullptr) {
+            p_last_leaf->p_right = this;
+        }
+        p_left = p_last_leaf;
+        p_last_leaf = this;
+
+        // p_left = p_parent->get_brother(c_branch_side, branch_side_t::LEFT);
+        // p_right = p_parent->get_brother(c_branch_side, branch_side_t::RIGHT);
+    } else {
+        p_last_leaf = nullptr;
     }
+}
+
+inline uint16_t LargeInt<8>::get_msb_index(bool init_call) const {
+    if (m_value >= 128) return 0;
+    if (m_value >= 64) return 1;
+    if (m_value >= 32) return 2;
+    if (m_value >= 16) return 3;
+    if (m_value >= 8) return 4;
+    if (m_value >= 4) return 5;
+    if (m_value >= 2) return 6;
+    if (m_value >= 1) return 7;
+
+    if (p_right == nullptr) return 8;
+    return p_right->get_msb_index() + 8;
 }
 
 
 uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, branch_side_t direction, uint16_t total_steps) const {
     static constexpr std::array<uint8_t, 8> bitmap_lookup{0b10000000, 0b11000000, 0b11100000, 0b11110000,
                                                           0b11111000, 0b11111100, 0b11111110, 0b11111111};
-
-    if (direction == branch_side_t::ROOT) {
-        throw std::runtime_error("Can not determine brother in direction NONE");
-    }
 
     if (total_steps == 0) {
         return (m_value & bitmap_lookup[num_upper - 1]) >> (8 - num_upper);
@@ -205,10 +229,13 @@ uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, branch_side_t direction, 
     if (direction == branch_side_t::RIGHT) {
         if (p_right == nullptr) return 0;
         return p_right->get_upper_bits(num_upper, direction, total_steps - 1);
-    } else {
+    }
+    if (direction == branch_side_t::LEFT)  {
         if (p_left == nullptr) return 0;
         return p_left->get_upper_bits(num_upper, direction, total_steps - 1);
     }
+    throw std::runtime_error("Can not determine brother in direction NONE");
+
 }
 
 uint8_t LargeInt<8>::get_lower_bits(uint8_t num_upper, branch_side_t direction, uint16_t total_steps) const {

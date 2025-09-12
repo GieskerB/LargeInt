@@ -47,18 +47,19 @@ class LargeInt {
 
     LargeInt(uint8_t, branch_side_t);
     LargeInt(const LargeInt<N / 2> &);
+
     LargeInt<8> *assent(branch_side_t, branch_side_t);
     LargeInt<8> *decent(branch_side_t, bool);
     void initialize_pointers(LargeInt<2 * N> * = nullptr);
 
-    template<uint16_t M>
-    void division_and_conquer(const LargeInt<M>&);
+    // [[nodiscard]] uint16_t get_msb_index(bool= true) const;
 
 public:
     LargeInt();
     LargeInt(uint8_t);
     LargeInt(const LargeInt &);
 
+    [[nodiscard]] uint16_t get_msb_index(bool= true) const;
 
     LargeInt<8> *get_brother(branch_side_t, branch_side_t);
     bool was_overflow();
@@ -81,6 +82,25 @@ public:
     LargeInt<N> &operator=(const LargeInt<N> &);
     bool operator==(const LargeInt<N> &) const;
     std::strong_ordering operator<=>(const LargeInt<N> &) const;
+
+    /// Do it template specific
+    // explicit operator uint64_t() const {
+    //     switch (N) {
+    //         case 16:
+    //         return (m_upper.m_value << 8) | m_lower.m_value;
+    //         case 32:
+    //         return (m_upper.m_upper.m_value << 24) | (m_upper.m_lower.m_value<< 16)
+    //              | (m_lower.m_upper.m_value << 8) | m_lower.m_lower.m_value;
+    //         case 64:
+    //         return (m_upper.m_upper.m_upper.m_value << 56) | (m_upper.m_upper.m_lower.m_value<< 48)
+    //              | (m_upper.m_lower.m_upper.m_value << 40) | (m_upper.m_lower.m_lower.m_value << 32)
+    //              | (m_lower.m_upper.m_upper.m_value << 24) | (m_lower.m_upper.m_lower.m_value<< 16)
+    //              | (m_lower.m_lower.m_upper.m_value << 8) | m_lower.m_lower.m_lower.m_value;
+    //         default:
+    //             throw std::runtime_error("can not cast LargeInt with more then 64 Bits into a uint64_t!");
+    //     }
+    // }
+
 };
 
 /*
@@ -127,7 +147,9 @@ LargeInt<N>::LargeInt(const LargeInt<N / 2> &lower):  m_upper{0, branch_side_t::
                                                 m_overflown{false},
                                                 m_underflown{false}, c_branch_side{branch_side_t::ROOT},
                                                 p_parent{nullptr} {
-    initialize_pointers(nullptr);
+    if (c_branch_side == branch_side_t::ROOT) {
+        initialize_pointers();
+    }
 }
 
 /*
@@ -167,11 +189,18 @@ LargeInt<8> *LargeInt<N>::decent(branch_side_t direction, bool is_first_decent) 
 
 }
 
+inline thread_local LargeInt<8>* p_last_leaf = nullptr;
 template<uint16_t N>
 void LargeInt<N>::initialize_pointers(LargeInt<2 * N> *parent) {
+    if (c_branch_side == branch_side_t::ROOT) p_last_leaf = nullptr;
     p_parent = parent;
     m_upper.initialize_pointers(this);
     m_lower.initialize_pointers(this);
+}
+
+template<uint16_t N>
+uint16_t LargeInt<N>::get_msb_index(bool init_call) const {
+    return init_call ? N - m_upper.get_msb_index(false) : m_upper.get_msb_index(false);
 }
 
 template<uint16_t N>
@@ -194,18 +223,6 @@ bool LargeInt<N>::was_underflow() {
     const bool tmp = m_underflown;
     m_underflown = false;
     return tmp;
-}
-
-template<uint16_t N> template<uint16_t M>
-void LargeInt<N>::division_and_conquer(const LargeInt<M> & other) {
-    /*
-     * if this < other return 0
-     *
-     * left = m_upper / other
-     * right = m_lower / other
-     *
-     * return concat(left,right)
-     */
 }
 
 /*
@@ -286,7 +303,7 @@ LargeInt<N> LargeInt<N>::operator/(const LargeInt<N>& other) const{
     return res;
 }
 
-// TODO Divide and Conquer with A/B = A_upper / B combined with A_lower/B
+// TODO Divide with bitwise long division
 
 template<uint16_t N>
 LargeInt<N>& LargeInt<N>::operator/=(const LargeInt<N> &other) {
