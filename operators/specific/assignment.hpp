@@ -48,6 +48,7 @@ LargeInt<8> &LargeInt<8>::operator*=(const LargeInt<8> &other) {
     return *this;
 }
 
+// TODO see other header
 
 LargeInt<8> &LargeInt<8>::operator/=(const LargeInt<8> &other) {
     m_value /= other.m_value;
@@ -123,6 +124,5 @@ LargeInt<8> &LargeInt<8>::operator>>=(uint16_t shift) {
 
     return *this;
 }
-
 
 #endif //LARGEINT_SPECIFIC_ASSIGNMENT_HPP

@@ -48,8 +48,6 @@ class LargeInt {
     LargeInt(uint8_t, branch_side_t);
     LargeInt(const LargeInt<N / 2> &);
 
-    LargeInt<8> *assent(branch_side_t, branch_side_t);
-    LargeInt<8> *decent(branch_side_t, bool);
     void initialize_pointers(LargeInt<2 * N> * = nullptr);
 
     // [[nodiscard]] uint16_t get_msb_index(bool= true) const;
@@ -61,7 +59,6 @@ public:
 
     [[nodiscard]] uint16_t get_msb_index(bool= true) const;
 
-    LargeInt<8> *get_brother(branch_side_t, branch_side_t);
     bool was_overflow();
     bool was_underflow();
 
@@ -158,37 +155,6 @@ LargeInt<N>::LargeInt(const LargeInt<N / 2> &lower):  m_upper{0, branch_side_t::
  * +----------------------+
  */
 
-template<uint16_t N>
-LargeInt<8> *LargeInt<N>::assent(branch_side_t coming, branch_side_t heading) {
-    if (coming == branch_side_t::LEFT and heading == branch_side_t::RIGHT) {
-        return m_lower.decent(branch_side_t::ROOT, true);
-    } else if (coming == branch_side_t::RIGHT and heading == branch_side_t::LEFT) {
-        return m_upper.decent(branch_side_t::ROOT, true);
-    }
-    if (p_parent == nullptr) {
-        return nullptr;
-    }
-    return p_parent->assent(c_branch_side, heading);
-}
-
-template<uint16_t N>
-LargeInt<8> *LargeInt<N>::decent(branch_side_t direction, bool is_first_decent) {
-
-    if (is_first_decent) {
-        if (direction == branch_side_t::LEFT) {
-            return m_upper.decent(branch_side_t::RIGHT, false);
-        } else {
-            return m_lower.decent(branch_side_t::LEFT, false);
-        }
-    }
-    if (direction == branch_side_t::LEFT) {
-        return m_upper.decent(direction, false);
-    } else {
-        return m_lower.decent(direction, false);
-    }
-
-}
-
 inline thread_local LargeInt<8>* p_last_leaf = nullptr;
 template<uint16_t N>
 void LargeInt<N>::initialize_pointers(LargeInt<2 * N> *parent) {
@@ -201,14 +167,6 @@ void LargeInt<N>::initialize_pointers(LargeInt<2 * N> *parent) {
 template<uint16_t N>
 uint16_t LargeInt<N>::get_msb_index(bool init_call) const {
     return init_call ? N - m_upper.get_msb_index(false) : m_upper.get_msb_index(false);
-}
-
-template<uint16_t N>
-LargeInt<8> *LargeInt<N>::get_brother(branch_side_t coming, branch_side_t heading) {
-    if (coming == branch_side_t::ROOT or heading == branch_side_t::ROOT) {
-        throw std::runtime_error("Can not find brother of node if either coming or heading from NONE!");
-    }
-    return assent(coming, heading);
 }
 
 template<uint16_t N>
@@ -231,139 +189,9 @@ bool LargeInt<N>::was_underflow() {
  * +-----------------------+
  */
 
-template<uint16_t N>
-LargeInt<N> LargeInt<N>::operator+(const LargeInt<N> &other) const {
-    LargeInt<N> res{*this};
-    res += other;
-    return res;
-}
-
-template<uint16_t N>
-LargeInt<N> &LargeInt<N>::operator+=(const LargeInt<N> &other) {
-    m_lower += other.m_lower;
-    m_upper += other.m_upper;
-
-    if (m_lower.was_overflow()) {
-        m_upper += 1;
-    }
-    m_overflown = m_upper.was_overflow();
-
-    return *this;
-}
-
-template<uint16_t N>
-LargeInt<N> LargeInt<N>::operator-(const LargeInt<N> &other) const {
-    LargeInt<N> res{*this};
-    res -= other;
-    return res;
-}
-
-template<uint16_t N>
-LargeInt<N> &LargeInt<N>::operator-=(const LargeInt<N> &other) {
-    m_lower -= other.m_lower;
-    m_upper -= other.m_upper;
-
-    if (m_lower.was_underflow()) {
-        m_upper -= 1;
-    }
-    m_underflown = m_upper.was_underflow();
-
-    return *this;
-}
-
-template<uint16_t N>
-LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
-    const LargeInt<N>& upper_times_upper = m_upper * other.m_upper;
-    const LargeInt<N>& lower_times_lower = m_lower * other.m_lower;
-    LargeInt<2 * N> special_product{(m_upper + m_lower) * (other.m_upper + other.m_lower)};
-
-    LargeInt<2 * N> result{};
-    result.m_upper = upper_times_upper;
-    result.m_lower = lower_times_lower;
-    result.initialize_pointers();
-
-    special_product -= lower_times_lower;
-    special_product -= upper_times_upper;
-    special_product <<= N / 2;
-    result += special_product;
-    return result;
-}
-
-template<uint16_t N>
-LargeInt<N> &LargeInt<N>::operator*=(const LargeInt<N> &other) {
-    *this = (*this * other).m_lower;
-    return *this;
-}
-
-
-template<uint16_t  N>
-LargeInt<N> LargeInt<N>::operator/(const LargeInt<N>& other) const{
-    LargeInt<N> res{*this};
-    res /= other;
-    return res;
-}
-
-// TODO Divide with bitwise long division
-
-template<uint16_t N>
-LargeInt<N>& LargeInt<N>::operator/=(const LargeInt<N> &other) {
-    return *this;
-}
-
-template<uint16_t N>
-LargeInt<N> LargeInt<N>::operator<<(uint16_t shift) const {
-    LargeInt<N> res{*this};
-    res <<= shift;
-    return res;
-}
-
-template<uint16_t N>
-LargeInt<N> &LargeInt<N>::operator<<=(uint16_t shift) {
-    m_upper <<= shift;
-    return *this;
-}
-
-template<uint16_t N>
-LargeInt<N> LargeInt<N>::operator>>(uint16_t shift) const {
-    LargeInt<N> res{*this};
-    res >>= shift;
-    return res;
-}
-
-template<uint16_t N>
-LargeInt<N> &LargeInt<N>::operator>>=(uint16_t shift) {
-    m_lower >>= shift;
-    return *this;
-}
-
-
-template<uint16_t N>
-LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &copy) {
-    if(&copy == this) {
-        return *this;
-    }
-    m_upper = copy.m_upper;
-    m_lower = copy.m_lower;
-    m_overflown = copy.m_overflown;
-    m_underflown = copy.m_underflown;
-    const_cast<branch_side_t &>(c_branch_side) = copy.c_branch_side;
-    initialize_pointers(nullptr);
-    return *this;
-}
-
-template<uint16_t N>
-bool LargeInt<N>::operator==(const LargeInt<N> &other) const {
-    return std::is_eq(*this <=> other);
-}
-
-
-template<uint16_t N>
-std::strong_ordering LargeInt<N>::operator<=>(const LargeInt<N> &other) const {
-    auto ordering = m_upper <=> other.m_upper;
-    if (ordering == std::strong_ordering::equal or ordering == std::strong_ordering::equivalent) {
-        return m_lower <=> other.m_lower;
-    }
-    return ordering;
-}
+#include "operators/general/arithmetic.hpp"
+#include "operators/general/assignment.hpp"
+#include "operators/general/comparison.hpp"
+#include "operators/general/in-de-crement.hpp"
 
 #endif //TESTING_LARGEINT_GENERAL_HPP

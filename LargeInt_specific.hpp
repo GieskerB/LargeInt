@@ -27,25 +27,12 @@ LargeInt<0>::LargeInt() {
 template<>
 class LargeInt<1 << 15> {
 public:
-    static LargeInt<8> *assent(branch_side_t, branch_side_t);
-
-    static LargeInt<8> *decent(branch_side_t, bool);
-
     LargeInt();
 };
 
 LargeInt<1 << 15>::LargeInt() {
     throw std::runtime_error("Capacity limit of LargeInt reached. Only < (2^15) Bits allowed");
 }
-
-LargeInt<8> *LargeInt<1 << 15>::assent(branch_side_t, branch_side_t) {
-    throw std::runtime_error("Capacity limit of LargeInt reached. Only < (2^15) Bits allowed");
-}
-
-LargeInt<8> *LargeInt<1 << 15>::decent(branch_side_t, bool) {
-    throw std::runtime_error("Capacity limit of LargeInt reached. Only < (2^15) Bits allowed");
-}
-
 
 // =====================================================================================================================
 
@@ -88,11 +75,7 @@ class LargeInt<8> {
 
     LargeInt(uint8_t, branch_side_t);
 
-    static LargeInt<8> *assent(branch_side_t, branch_side_t);
-    LargeInt<8> *decent(branch_side_t, bool);
-
     void initialize_pointers(LargeInt<16> *);
-
     [[nodiscard]] uint16_t get_msb_index(bool = false) const;
 
     [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t, uint16_t) const;
@@ -175,16 +158,6 @@ LargeInt<8>::LargeInt(const LargeInt<8> &copy)
  * |Methods implementation|
  * +----------------------+
  */
-
-LargeInt<8> *LargeInt<8>::assent(branch_side_t, branch_side_t) {
-    throw std::logic_error("Function not implemented!");
-}
-
-LargeInt<8> *LargeInt<8>::decent(branch_side_t, bool) {
-    return this;
-}
-
-
 
 void LargeInt<8>::initialize_pointers(LargeInt<16> *parent) {
 
@@ -281,6 +254,5 @@ bool LargeInt<8>::was_underflow() {
 #include "operators/specific/assignment.hpp"
 #include "operators/specific/comparison.hpp"
 #include "operators/specific/in-de-crement.hpp"
-
 
 #endif //TESTING_LARGEINT_SPECIFIC_HPP
