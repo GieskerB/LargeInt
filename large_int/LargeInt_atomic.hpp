@@ -124,8 +124,8 @@ public:
     // in- / decrement
     LargeInt<8> &operator++();
     LargeInt<8> &operator--();
-    LargeInt<8> &operator++(int);
-    LargeInt<8> &operator--(int);
+    LargeInt<8> operator++(int);
+    LargeInt<8> operator--(int);
 
     explicit operator uint64_t() const {
         return m_value;
@@ -250,9 +250,9 @@ bool LargeInt<8>::was_underflow() {
  * +-----------------------+
  */
 
-#include "operators/atomic/arithmetic.hpp"
-#include "operators/atomic/assignment.hpp"
-#include "operators/atomic/comparison.hpp"
-#include "operators/atomic/in-de-crement.hpp"
+#include "arithmetic_atomic.hpp"
+#include "assignment_atomic.hpp"
+#include "comparison_atomic.hpp"
+#include "in-de-crement_atomic.hpp"
 
 #endif //TESTING_LARGEINT_SPECIFIC_HPP

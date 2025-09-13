@@ -62,41 +62,44 @@ public:
     bool was_overflow();
     bool was_underflow();
 
-    LargeInt<N> operator+(const LargeInt<N> &) const;
-    LargeInt<N> &operator+=(const LargeInt<N> &);
-    LargeInt<N> operator-(const LargeInt<N> &) const;
-    LargeInt<N> &operator-=(const LargeInt<N> &);
-    LargeInt<2 * N> operator*(const LargeInt<N> &) const;
-    LargeInt<N> &operator*=(const LargeInt<N> &);
-    LargeInt<N> operator/(const LargeInt<N> &) const;
-    LargeInt<N> &operator/=(const LargeInt<N> &);
 
+    // arithmetic
+    LargeInt<N> operator+() const;
+    LargeInt<N> operator-() const;
+    LargeInt<N> operator+(const LargeInt<N> &) const;
+    LargeInt<N> operator-(const LargeInt<N> &) const;
+    LargeInt<2*N> operator*(const LargeInt<N> &) const;
+    LargeInt<N> operator/(const LargeInt<N> &) const;
+    LargeInt<N> operator%(const LargeInt<N> &) const;
+    LargeInt<N> operator~() const;
+    LargeInt<N> operator&(const LargeInt<N> &) const;
+    LargeInt<N> operator|(const LargeInt<N> &) const;
+    LargeInt<N> operator^(const LargeInt<N> &) const;
     LargeInt<N> operator<<(uint16_t) const;
-    LargeInt<N> &operator<<=(uint16_t);
     LargeInt<N> operator>>(uint16_t) const;
+
+    // assignment
+    LargeInt<N> &operator=(const LargeInt &);
+    LargeInt<N> &operator+=(const LargeInt<N> &);
+    LargeInt<N> &operator-=(const LargeInt<N> &);
+    LargeInt<N> &operator*=(const LargeInt<N> &);
+    LargeInt<N> &operator/=(const LargeInt<N> &);
+    LargeInt<N> &operator%=(const LargeInt<N> &);
+    LargeInt<N> &operator&=(const LargeInt<N> &);
+    LargeInt<N> &operator|=(const LargeInt<N> &);
+    LargeInt<N> &operator^=(const LargeInt<N> &);
+    LargeInt<N> &operator<<=(uint16_t);
     LargeInt<N> &operator>>=(uint16_t);
 
-    LargeInt<N> &operator=(const LargeInt<N> &);
+    // comparison
     bool operator==(const LargeInt<N> &) const;
     std::strong_ordering operator<=>(const LargeInt<N> &) const;
 
-    /// Do it template specific
-    // explicit operator uint64_t() const {
-    //     switch (N) {
-    //         case 16:
-    //         return (m_upper.m_value << 8) | m_lower.m_value;
-    //         case 32:
-    //         return (m_upper.m_upper.m_value << 24) | (m_upper.m_lower.m_value<< 16)
-    //              | (m_lower.m_upper.m_value << 8) | m_lower.m_lower.m_value;
-    //         case 64:
-    //         return (m_upper.m_upper.m_upper.m_value << 56) | (m_upper.m_upper.m_lower.m_value<< 48)
-    //              | (m_upper.m_lower.m_upper.m_value << 40) | (m_upper.m_lower.m_lower.m_value << 32)
-    //              | (m_lower.m_upper.m_upper.m_value << 24) | (m_lower.m_upper.m_lower.m_value<< 16)
-    //              | (m_lower.m_lower.m_upper.m_value << 8) | m_lower.m_lower.m_lower.m_value;
-    //         default:
-    //             throw std::runtime_error("can not cast LargeInt with more then 64 Bits into a uint64_t!");
-    //     }
-    // }
+    // in- / decrement
+    LargeInt<N> &operator++();
+    LargeInt<N> &operator--();
+    LargeInt<N> operator++(int);
+    LargeInt<N> operator--(int);
 
 };
 
@@ -189,9 +192,9 @@ bool LargeInt<N>::was_underflow() {
  * +-----------------------+
  */
 
-#include "operators/recursive/arithmetic.hpp"
-#include "operators/recursive/assignment.hpp"
-#include "operators/recursive/comparison.hpp"
-#include "operators/recursive/in-de-crement.hpp"
+#include "arithmetic_recursive.hpp"
+#include "assignment_recursive.hpp"
+#include "comparison_recursive.hpp"
+#include "in-de-crement_recursive.hpp"
 
 #endif //TESTING_LARGEINT_GENERAL_HPP

@@ -1,21 +1,17 @@
-//
-// Created by bjarn on 19.01.2025.
-//
-
 #ifndef LARGEINT_ATOMIC_ARITHMETIC_HPP
 #define LARGEINT_ATOMIC_ARITHMETIC_HPP
 
-LargeInt<8> LargeInt<8>::operator+() const {
-    LargeInt<8> res{*this};
-    res += 1;
-    return res;
-}
-
-LargeInt<8> LargeInt<8>::operator-() const {
-    LargeInt<8> res{*this};
-    res -= 1;
-    return res;
-}
+// LargeInt<8> LargeInt<8>::operator+() const {
+//     LargeInt<8> res{*this};
+//     res += 1;
+//     return res;
+// }
+//
+// LargeInt<8> LargeInt<8>::operator-() const {
+//     LargeInt<8> res{*this};
+//     res -= 1;
+//     return res;
+// }
 
 LargeInt<8> LargeInt<8>::operator+(const LargeInt<8> &other) const {
     LargeInt<8> res{*this};
