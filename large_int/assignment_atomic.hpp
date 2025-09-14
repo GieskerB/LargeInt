@@ -5,7 +5,7 @@
 #ifndef LARGEINT_ATOMIC_ASSIGNMENT_HPP
 #define LARGEINT_ATOMIC_ASSIGNMENT_HPP
 
-LargeInt<8> &LargeInt<8>::operator=(const LargeInt<8> &copy) {
+inline LargeInt<8> &LargeInt<8>::operator=(const LargeInt<8> &copy) {
     m_value = copy.m_value;
     m_overflown = copy.m_overflown;
     m_underflown = copy.m_underflown;
@@ -17,7 +17,7 @@ LargeInt<8> &LargeInt<8>::operator=(const LargeInt<8> &copy) {
     return *this;
 }
 
-LargeInt<8> &LargeInt<8>::operator+=(const LargeInt<8> &other) {
+inline LargeInt<8> &LargeInt<8>::operator+=(const LargeInt<8> &other) {
     /*
      * https://stackoverflow.com/questions/199333/how-do-i-detect-unsigned-integer-overflow
      */
@@ -31,7 +31,7 @@ LargeInt<8> &LargeInt<8>::operator+=(const LargeInt<8> &other) {
 }
 
 
-LargeInt<8> &LargeInt<8>::operator-=(const LargeInt<8> &other) {
+inline LargeInt<8> &LargeInt<8>::operator-=(const LargeInt<8> &other) {
     if (other.m_value > 0 && m_value < std::numeric_limits<uint8_t>::min() + other.m_value) {
         // `m_value - other.m_value` would underflow
         m_underflown = true;
@@ -42,7 +42,7 @@ LargeInt<8> &LargeInt<8>::operator-=(const LargeInt<8> &other) {
 }
 
 
-LargeInt<8> &LargeInt<8>::operator*=(const LargeInt<8> &other) {
+inline LargeInt<8> &LargeInt<8>::operator*=(const LargeInt<8> &other) {
     auto res = *this * other;
     m_value = res.m_lower.m_value;
     return *this;
@@ -50,13 +50,13 @@ LargeInt<8> &LargeInt<8>::operator*=(const LargeInt<8> &other) {
 
 // TODO see other header
 
-LargeInt<8> &LargeInt<8>::operator/=(const LargeInt<8> &other) {
+inline LargeInt<8> &LargeInt<8>::operator/=(const LargeInt<8> &other) {
     m_value /= other.m_value;
     return *this;
 }
 
 
-LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
+inline LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
     const uint8_t shift_mod8 = shift == 0 ? 0 : ((shift - 1) % 8) + 1;
 
     if (shift == 0) return *this;
@@ -81,27 +81,27 @@ LargeInt<8> &LargeInt<8>::operator<<=(uint16_t shift) {
 }
 
 
-LargeInt<8> &LargeInt<8>::operator%=(const LargeInt<8> &) {
+inline LargeInt<8> &LargeInt<8>::operator%=(const LargeInt<8> &) {
     // TODO
     throw std::runtime_error("not implemented");
 }
 
-LargeInt<8> &LargeInt<8>::operator&=(const LargeInt<8> &other) {
+inline LargeInt<8> &LargeInt<8>::operator&=(const LargeInt<8> &other) {
     m_value &= other.m_value;
     return *this;
 }
 
-LargeInt<8> &LargeInt<8>::operator|=(const LargeInt<8> &other) {
+inline LargeInt<8> &LargeInt<8>::operator|=(const LargeInt<8> &other) {
     m_value |= other.m_value;
     return *this;
 }
 
-LargeInt<8> &LargeInt<8>::operator^=(const LargeInt<8> &other) {
+inline LargeInt<8> &LargeInt<8>::operator^=(const LargeInt<8> &other) {
     m_value ^= other.m_value;
     return *this;
 }
 
-LargeInt<8> &LargeInt<8>::operator>>=(uint16_t shift) {
+inline LargeInt<8> &LargeInt<8>::operator>>=(uint16_t shift) {
     const uint8_t shift_mod8 = shift == 0 ? 0 : ((shift - 1) % 8) + 1;
 
     if (shift == 0) {

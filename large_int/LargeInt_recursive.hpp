@@ -1,10 +1,8 @@
-#ifndef TESTING_LARGEINT_GENERAL_HPP
-#define TESTING_LARGEINT_GENERAL_HPP
+#ifndef TESTING_LARGEINT_RECURSIVE_HPP
+#define TESTING_LARGEINT_RECURSIVE_HPP
 
 #include <cstdint>
 #include <stdexcept>
-#include <limits>
-#include <iostream>
 
 
 // =====================================================================================================================
@@ -56,6 +54,7 @@ public:
     LargeInt();
     LargeInt(uint8_t);
     LargeInt(const LargeInt &);
+    explicit LargeInt (const std::string&);
 
     [[nodiscard]] uint16_t get_msb_index(bool= true) const;
 
@@ -147,10 +146,22 @@ LargeInt<N>::LargeInt(const LargeInt<N / 2> &lower):  m_upper{0, branch_side_t::
                                                 m_overflown{false},
                                                 m_underflown{false}, c_branch_side{branch_side_t::ROOT},
                                                 p_parent{nullptr} {
-    if (c_branch_side == branch_side_t::ROOT) {
-        initialize_pointers();
+    initialize_pointers();
+}
+
+template<uint16_t N>
+LargeInt<N>::LargeInt(const std::string &str_repr):  m_upper{0, branch_side_t::LEFT}, m_lower{0,branch_side_t::RIGHT},
+                                                m_overflown{false},
+                                                m_underflown{false}, c_branch_side{branch_side_t::ROOT},
+                                                p_parent{nullptr} {
+    initialize_pointers();
+    static const LargeInt<N> ten {10};
+    for (const char c : str_repr) {
+        *this *= 10;
+        *this += c - '0';
     }
 }
+
 
 /*
  * +----------------------+
@@ -197,4 +208,4 @@ bool LargeInt<N>::was_underflow() {
 #include "comparison_recursive.hpp"
 #include "in-de-crement_recursive.hpp"
 
-#endif //TESTING_LARGEINT_GENERAL_HPP
+#endif //TESTING_LARGEINT_RECURSIVE_HPP

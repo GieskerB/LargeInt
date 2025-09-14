@@ -28,3 +28,31 @@ TEST(addition3,test_eq) {
     ss << a;
     EXPECT_EQ(ss.str(),"202125");
 }
+
+TEST(multiplication1, test_eq) {
+    LargeInt<32> a{22},b{11};
+    LargeInt<64> c = a * b;
+    std::stringstream ss;
+    ss << c;
+    EXPECT_EQ(ss.str(),"242");
+}
+
+TEST(multiplication2, test_eq) {
+    LargeInt<32> a{213},b{105};
+    LargeInt<64> c = a * b;
+    std::stringstream ss;
+    ss << c;
+    EXPECT_EQ(ss.str(),"22365");
+}
+
+TEST(multiplication3, test_eq) {
+    LargeInt<32> a{42},b{69};
+    LargeInt<64> c;
+    for ( int i = 0; i< 420; i++) {
+        c += a * b;
+    }
+
+    std::stringstream ss;
+    ss << c;
+    EXPECT_EQ(ss.str(),"1217160");
+}

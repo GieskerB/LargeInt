@@ -1,5 +1,5 @@
-#ifndef TESTING_LARGEINT_SPECIFIC_HPP
-#define TESTING_LARGEINT_SPECIFIC_HPP
+#ifndef TESTING_LARGEINT_ATOMIC_HPP
+#define TESTING_LARGEINT_ATOMIC_HPP
 
 #include <cstdint>
 #include <stdexcept>
@@ -17,7 +17,7 @@ public:
     LargeInt();
 };
 
-LargeInt<0>::LargeInt() {
+inline LargeInt<0>::LargeInt() {
     throw std::runtime_error("LargeInt in only supports a perfect power of 2 number of Bits.");
 }
 
@@ -30,7 +30,7 @@ public:
     LargeInt();
 };
 
-LargeInt<1 << 15>::LargeInt() {
+inline LargeInt<1 << 15>::LargeInt() {
     throw std::runtime_error("Capacity limit of LargeInt reached. Only < (2^15) Bits allowed");
 }
 
@@ -85,6 +85,7 @@ public:
     LargeInt();
     LargeInt(uint8_t);
     LargeInt(const LargeInt<8> &);
+    explicit LargeInt (const std::string&);
 
     bool was_overflow();
     bool was_underflow();
@@ -138,19 +139,26 @@ public:
  * +------------+
  */
 
-LargeInt<8>::LargeInt() : LargeInt{0} {}
+inline LargeInt<8>::LargeInt() : LargeInt{0} {}
 
 
-LargeInt<8>::LargeInt(uint8_t init_value) : LargeInt(init_value, branch_side_t::ROOT) {}
+inline LargeInt<8>::LargeInt(uint8_t init_value) : LargeInt(init_value, branch_side_t::ROOT) {}
 
-LargeInt<8>::LargeInt(uint8_t init_value, branch_side_t b_side)
+inline LargeInt<8>::LargeInt(uint8_t init_value, branch_side_t b_side)
         : m_value{init_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
           p_parent{nullptr}, c_branch_side{b_side} {}
 
-// TODO p_left, p_right
-LargeInt<8>::LargeInt(const LargeInt<8> &copy)
+inline LargeInt<8>::LargeInt(const LargeInt<8> &copy)
         : m_value{copy.m_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
           p_parent{nullptr}, c_branch_side{copy.c_branch_side} {}
+
+inline LargeInt<8>::LargeInt(const std::string & str_repr) : m_value{0}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
+          p_parent{nullptr}, c_branch_side{branch_side_t::ROOT}{
+    for (const char c : str_repr) {
+        m_value *= 10;
+        m_value += c - '0';
+    }
+}
 
 
 /*
@@ -159,7 +167,7 @@ LargeInt<8>::LargeInt(const LargeInt<8> &copy)
  * +----------------------+
  */
 
-void LargeInt<8>::initialize_pointers(LargeInt<16> *parent) {
+inline void LargeInt<8>::initialize_pointers(LargeInt<16> *parent) {
 
     p_parent = parent;
     if (p_parent != nullptr) {
@@ -191,8 +199,8 @@ inline uint16_t LargeInt<8>::get_msb_index(bool init_call) const {
 }
 
 
-uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, branch_side_t direction, uint16_t total_steps) const {
-    static constexpr std::array<uint8_t, 8> bitmap_lookup{0b10000000, 0b11000000, 0b11100000, 0b11110000,
+inline uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, branch_side_t direction, uint16_t total_steps) const {
+    static std::array<uint8_t, 8> bitmap_lookup{0b10000000, 0b11000000, 0b11100000, 0b11110000,
                                                           0b11111000, 0b11111100, 0b11111110, 0b11111111};
 
     if (total_steps == 0) {
@@ -211,7 +219,7 @@ uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, branch_side_t direction, 
 
 }
 
-uint8_t LargeInt<8>::get_lower_bits(uint8_t num_upper, branch_side_t direction, uint16_t total_steps) const {
+inline uint8_t LargeInt<8>::get_lower_bits(uint8_t num_upper, branch_side_t direction, uint16_t total_steps) const {
     static constexpr std::array<uint8_t, 8> bitmap_lookup{0b00000001, 0b00000011, 0b00000111, 0b00001111,
                                                           0b00011111, 0b00111111, 0b01111111, 0b11111111};
 
@@ -232,13 +240,13 @@ uint8_t LargeInt<8>::get_lower_bits(uint8_t num_upper, branch_side_t direction, 
 }
 
 
-bool LargeInt<8>::was_overflow() {
+inline bool LargeInt<8>::was_overflow() {
     const bool tmp = m_overflown;
     m_overflown = false;
     return tmp;
 }
 
-bool LargeInt<8>::was_underflow() {
+inline bool LargeInt<8>::was_underflow() {
     const bool tmp = m_underflown;
     m_underflown = false;
     return tmp;
@@ -255,4 +263,4 @@ bool LargeInt<8>::was_underflow() {
 #include "comparison_atomic.hpp"
 #include "in-de-crement_atomic.hpp"
 
-#endif //TESTING_LARGEINT_SPECIFIC_HPP
+#endif //TESTING_LARGEINT_ATOMIC_HPP
