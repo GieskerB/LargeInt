@@ -2,15 +2,11 @@
 #include "large_int/LargeInt.hpp"
 
 int main() {
-    LargeInt<32> c{123};
 
-    std::cout << c<< '\n';
-    std::cout << c++<< '\n';
-    std::cout << c--<< '\n';
-    std::cout << "---\n";
-    std::cout << c<< '\n';
-    std::cout << --c<< '\n';
-    std::cout << ++c<< '\n';
+    LargeInt<64> li{12};
+    li <<= 11;
+
+    std::cout << li <<"|" << 24576 << std::endl;
 
     return 0;
 }

@@ -56,3 +56,35 @@ TEST(multiplication3, test_eq) {
     ss << c;
     EXPECT_EQ(ss.str(),"1217160");
 }
+
+TEST(bitshiftleft1, test_eq) {
+    LargeInt<64> li{200};
+    li <<= 4;
+
+    std::stringstream ss;
+    ss << li;
+    EXPECT_EQ(ss.str(),"3200");
+}
+
+TEST(bitshiftleft2, test_eq) {
+    LargeInt<64> li{12};
+    // li <<= 11;
+    li <<= 8;
+    li <<= 3;
+
+    std::stringstream ss;
+    ss << li;
+    EXPECT_EQ(ss.str(),"24576");
+}
+
+TEST(bitshiftleft3, test_eq) {
+    LargeInt<64> li{153};
+    li <<= 9; // 78336
+    li += 210; // 78546
+    li <<= 13; // 643448832
+
+    std::stringstream ss;
+    ss << li;
+    EXPECT_EQ(ss.str(),"643448832");
+}
+

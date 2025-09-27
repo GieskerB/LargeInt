@@ -155,10 +155,11 @@ LargeInt<N>::LargeInt(const std::string &str_repr):  m_upper{0, branch_side_t::L
                                                 m_underflown{false}, c_branch_side{branch_side_t::ROOT},
                                                 p_parent{nullptr} {
     initialize_pointers();
-    static const LargeInt<N> ten {10};
+    static const std::array<LargeInt<N>,11> constants {0,1,2,3,4,5,6,7,8,9,10};
+
     for (const char c : str_repr) {
-        *this *= 10;
-        *this += c - '0';
+        *this *= constants[10];
+        *this += constants[c - '0'];
     }
 }
 

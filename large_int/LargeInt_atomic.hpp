@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <array>
 #include <bitset>
+#include <limits>
 
 #include "LargeInt_recursive.hpp"
 
@@ -199,13 +200,11 @@ inline uint16_t LargeInt<8>::get_msb_index(bool init_call) const {
 }
 
 
-inline uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, branch_side_t direction, uint16_t total_steps) const {
-    static std::array<uint8_t, 8> bitmap_lookup{0b10000000, 0b11000000, 0b11100000, 0b11110000,
+inline uint8_t LargeInt<8>::get_upper_bits(const uint8_t num_upper, const branch_side_t direction, const uint16_t total_steps) const {
+    static constexpr std::array<uint8_t, 9> bitmap_lookup{0b00000000,0b10000000, 0b11000000, 0b11100000, 0b11110000,
                                                           0b11111000, 0b11111100, 0b11111110, 0b11111111};
 
-    if (total_steps == 0) {
-        return (m_value & bitmap_lookup[num_upper - 1]) >> (8 - num_upper);
-    }
+    if (total_steps == 0) return (m_value & bitmap_lookup[num_upper]) >> (8 - num_upper);
 
     if (direction == branch_side_t::RIGHT) {
         if (p_right == nullptr) return 0;
@@ -216,27 +215,23 @@ inline uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, branch_side_t dire
         return p_left->get_upper_bits(num_upper, direction, total_steps - 1);
     }
     throw std::runtime_error("Can not determine brother in direction NONE");
-
 }
 
-inline uint8_t LargeInt<8>::get_lower_bits(uint8_t num_upper, branch_side_t direction, uint16_t total_steps) const {
-    static constexpr std::array<uint8_t, 8> bitmap_lookup{0b00000001, 0b00000011, 0b00000111, 0b00001111,
+inline uint8_t LargeInt<8>::get_lower_bits(const uint8_t num_lower, const branch_side_t direction, const uint16_t total_steps) const {
+    static constexpr std::array<uint8_t, 9> bitmap_lookup{0b00000000,0b00000001, 0b00000011, 0b00000111, 0b00001111,
                                                           0b00011111, 0b00111111, 0b01111111, 0b11111111};
 
-    if (direction == branch_side_t::ROOT) {
-        throw std::runtime_error("Can not determine brother in direction NONE");
-    }
+    if (total_steps == 0) return m_value & bitmap_lookup[num_lower] << (8 - num_lower);
 
-    if (total_steps == 0) {
-        return m_value & bitmap_lookup[num_upper - 1] << (8 - num_upper);
-    }
     if (direction == branch_side_t::RIGHT) {
         if (p_right == nullptr) return 0;
-        return p_right->get_lower_bits(num_upper, direction, total_steps - 1);
-    } else {
-        if (p_left == nullptr) return 0;
-        return p_left->get_lower_bits(num_upper, direction, total_steps - 1);
+        return p_right->get_lower_bits(num_lower, direction, total_steps - 1);
     }
+    if (direction == branch_side_t::LEFT)  {
+        if (p_left == nullptr) return 0;
+        return p_left->get_lower_bits(num_lower, direction, total_steps - 1);
+    }
+    throw std::runtime_error("Can not determine brother in direction NONE");
 }
 
 
