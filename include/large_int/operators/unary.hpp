@@ -1,29 +1,35 @@
-#ifndef LARGEINT_RECURSIVE_IN_DE_CREMENT_HPP
-#define LARGEINT_RECURSIVE_IN_DE_CREMENT_HPP
+//
+// Created by bjarn on 19.01.2025.
+//
 
-template <uint16_t N>
+#ifndef LARGEINT_UNARY_HPP
+#define LARGEINT_UNARY_HPP
+
+template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator++() {
     *this+=1;
     return *this;
 }
 
-template <uint16_t N>
+template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator--() {
     *this-=1;
     return *this;
 }
 
-template <uint16_t N>
+template<uint16_t N>
 LargeInt<N> LargeInt<N>::operator++(int) {
     LargeInt<N> res{*this};
     ++*this;
     return res;
+
 }
 
-template <uint16_t N>
+template<uint16_t N>
 LargeInt<N> LargeInt<N>::operator--(int) {
     LargeInt<N> res{*this};
     --*this;
     return res;
 }
-#endif //LARGEINT_RECURSIVE_IN_DE_CREMENT_HPP
+
+#endif //LARGEINT_UNARY_HPP
