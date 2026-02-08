@@ -1,0 +1,261 @@
+#ifndef TESTING_LARGEINT_ATOMIC_HPP
+#define TESTING_LARGEINT_ATOMIC_HPP
+
+#include <cstdint>
+#include <stdexcept>
+#include <array>
+#include <bitset>
+#include <limits>
+
+#include "LargeInt_recursive.hpp"
+
+/*
+ * Will only throw exceptions, when used. Necessary for compiler statisfaction with recursive design.
+ */
+template<>
+class LargeInt<0> {
+public:
+    LargeInt();
+};
+
+inline LargeInt<0>::LargeInt() {
+    throw std::runtime_error("LargeInt in only supports a perfect power of 2 number of Bits.");
+}
+
+/*
+ * Will only throw exceptions, when used. Necessary for compiler statisfaction with recursive design.
+ */
+template<>
+class LargeInt<1 << 15> {
+public:
+    LargeInt();
+};
+
+inline LargeInt<1 << 15>::LargeInt() {
+    throw std::runtime_error("Capacity limit of LargeInt reached. Only < (2^15) Bits allowed");
+}
+
+// =====================================================================================================================
+
+
+template<uint16_t N>
+class LargeInt;
+
+
+// =====================================================================================================================
+
+
+/**
+ * LargeInts recursive design needs a smallest value to stop at. Choosing N = 8 aka. only a
+ * single byte as the smallest value allows to implement every basecase with ease and also
+ * make testing easier. Also this design allows for the use of "small" LargeInts
+ * with 16 and 8 bits in contrast to implementing the basecase with a 32-bit Integer.
+ */
+template<>
+class LargeInt<8> {
+
+    template<uint16_t M>
+    friend class LargeInt;
+
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<8> &large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<16> &large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<32> &large_int);
+    friend std::ostream &operator<<(std::ostream &os, const LargeInt<64> &large_int);
+
+    /// Stores one single byte of the possibly huge LargeInt instance.
+    uint8_t m_value;
+    /// Temporal values used to make addition and subtraction easier.
+    bool m_overflown, m_underflown;
+    /// Remembers if instance is the upper or lower part of parent instance.
+    const branch_side_t c_branch_side;
+
+    /// For easier traversal in huge LargeInts, an instance stores a pointer to its parent
+    LargeInt<16> *p_parent;
+    /// For easier traversal only the LargeInt<8> knows its left and right brother
+    LargeInt<8> *p_left, *p_right;
+
+    LargeInt(uint8_t, branch_side_t);
+
+    void initialize_pointers(LargeInt<16> *);
+    [[nodiscard]] uint16_t get_msb_index(bool = false) const;
+
+    [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t, uint16_t) const;
+    [[nodiscard]] uint8_t get_lower_bits(uint8_t, branch_side_t, uint16_t) const;
+
+public:
+    LargeInt();
+    LargeInt(uint8_t);
+    LargeInt(const LargeInt<8> &);
+    explicit LargeInt (const std::string&);
+
+    bool was_overflow();
+    bool was_underflow();
+
+    // arithmetic
+    LargeInt<8> operator+() const;
+    LargeInt<8> operator-() const;
+    LargeInt<8> operator+(const LargeInt<8> &) const;
+    LargeInt<8> operator-(const LargeInt<8> &) const;
+    LargeInt<16> operator*(const LargeInt<8> &) const;
+    LargeInt<8> operator/(const LargeInt<8> &) const;
+    LargeInt<8> operator%(const LargeInt<8> &) const;
+    LargeInt<8> operator~() const;
+    LargeInt<8> operator&(const LargeInt<8> &) const;
+    LargeInt<8> operator|(const LargeInt<8> &) const;
+    LargeInt<8> operator^(const LargeInt<8> &) const;
+    LargeInt<8> operator<<(uint16_t) const;
+    LargeInt<8> operator>>(uint16_t) const;
+
+    // assignment
+    LargeInt<8> &operator=(const LargeInt &);
+    LargeInt<8> &operator+=(const LargeInt<8> &);
+    LargeInt<8> &operator-=(const LargeInt<8> &);
+    LargeInt<8> &operator*=(const LargeInt<8> &);
+    LargeInt<8> &operator/=(const LargeInt<8> &);
+    LargeInt<8> &operator%=(const LargeInt<8> &);
+    LargeInt<8> &operator&=(const LargeInt<8> &);
+    LargeInt<8> &operator|=(const LargeInt<8> &);
+    LargeInt<8> &operator^=(const LargeInt<8> &);
+    LargeInt<8> &operator<<=(uint16_t);
+    LargeInt<8> &operator>>=(uint16_t);
+
+    // comparison
+    bool operator==(const LargeInt<8> &) const;
+    std::strong_ordering operator<=>(const LargeInt<8> &) const;
+
+    // in- / decrement
+    LargeInt<8> &operator++();
+    LargeInt<8> &operator--();
+    LargeInt<8> operator++(int);
+    LargeInt<8> operator--(int);
+
+    explicit operator uint64_t() const {
+        return m_value;
+    }
+};
+
+/*
+ * +------------+
+ * |Constructors|
+ * +------------+
+ */
+
+inline LargeInt<8>::LargeInt() : LargeInt{0} {}
+
+
+inline LargeInt<8>::LargeInt(uint8_t init_value) : LargeInt(init_value, branch_side_t::ROOT) {}
+
+inline LargeInt<8>::LargeInt(uint8_t init_value, branch_side_t b_side)
+        : m_value{init_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
+          p_parent{nullptr}, c_branch_side{b_side} {}
+
+inline LargeInt<8>::LargeInt(const LargeInt<8> &copy)
+        : m_value{copy.m_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
+          p_parent{nullptr}, c_branch_side{copy.c_branch_side} {}
+
+inline LargeInt<8>::LargeInt(const std::string & str_repr) : m_value{0}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
+          p_parent{nullptr}, c_branch_side{branch_side_t::ROOT}{
+    for (const char c : str_repr) {
+        m_value *= 10;
+        m_value += c - '0';
+    }
+}
+
+
+/*
+ * +----------------------+
+ * |Methods implementation|
+ * +----------------------+
+ */
+
+inline void LargeInt<8>::initialize_pointers(LargeInt<16> *parent) {
+
+    p_parent = parent;
+    if (p_parent != nullptr) {
+        if (p_last_leaf != nullptr) {
+            p_last_leaf->p_right = this;
+        }
+        p_left = p_last_leaf;
+        p_last_leaf = this;
+
+        // p_left = p_parent->get_brother(c_branch_side, branch_side_t::LEFT);
+        // p_right = p_parent->get_brother(c_branch_side, branch_side_t::RIGHT);
+    } else {
+        p_last_leaf = nullptr;
+    }
+}
+
+inline uint16_t LargeInt<8>::get_msb_index(bool init_call) const {
+    if (m_value >= 128) return 0;
+    if (m_value >= 64) return 1;
+    if (m_value >= 32) return 2;
+    if (m_value >= 16) return 3;
+    if (m_value >= 8) return 4;
+    if (m_value >= 4) return 5;
+    if (m_value >= 2) return 6;
+    if (m_value >= 1) return 7;
+
+    if (p_right == nullptr) return 8;
+    return p_right->get_msb_index() + 8;
+}
+
+
+inline uint8_t LargeInt<8>::get_upper_bits(const uint8_t num_upper, const branch_side_t direction, const uint16_t total_steps) const {
+    static constexpr std::array<uint8_t, 9> bitmap_lookup{0b00000000,0b10000000, 0b11000000, 0b11100000, 0b11110000,
+                                                          0b11111000, 0b11111100, 0b11111110, 0b11111111};
+
+    if (total_steps == 0) return (m_value & bitmap_lookup[num_upper]) >> (8 - num_upper);
+
+    if (direction == branch_side_t::RIGHT) {
+        if (p_right == nullptr) return 0;
+        return p_right->get_upper_bits(num_upper, direction, total_steps - 1);
+    }
+    if (direction == branch_side_t::LEFT)  {
+        if (p_left == nullptr) return 0;
+        return p_left->get_upper_bits(num_upper, direction, total_steps - 1);
+    }
+    throw std::runtime_error("Can not determine brother in direction NONE");
+}
+
+inline uint8_t LargeInt<8>::get_lower_bits(const uint8_t num_lower, const branch_side_t direction, const uint16_t total_steps) const {
+    static constexpr std::array<uint8_t, 9> bitmap_lookup{0b00000000,0b00000001, 0b00000011, 0b00000111, 0b00001111,
+                                                          0b00011111, 0b00111111, 0b01111111, 0b11111111};
+
+    if (total_steps == 0) return m_value & bitmap_lookup[num_lower] << (8 - num_lower);
+
+    if (direction == branch_side_t::RIGHT) {
+        if (p_right == nullptr) return 0;
+        return p_right->get_lower_bits(num_lower, direction, total_steps - 1);
+    }
+    if (direction == branch_side_t::LEFT)  {
+        if (p_left == nullptr) return 0;
+        return p_left->get_lower_bits(num_lower, direction, total_steps - 1);
+    }
+    throw std::runtime_error("Can not determine brother in direction NONE");
+}
+
+
+inline bool LargeInt<8>::was_overflow() {
+    const bool tmp = m_overflown;
+    m_overflown = false;
+    return tmp;
+}
+
+inline bool LargeInt<8>::was_underflow() {
+    const bool tmp = m_underflown;
+    m_underflown = false;
+    return tmp;
+}
+
+/*
+ * +-----------------------+
+ * |Operator implementation|
+ * +-----------------------+
+ */
+
+#include "arithmetic_atomic.hpp"
+#include "assignment_atomic.hpp"
+#include "comparison_atomic.hpp"
+#include "in-de-crement_atomic.hpp"
+
+#endif //TESTING_LARGEINT_ATOMIC_HPP
