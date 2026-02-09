@@ -17,7 +17,8 @@
 template<>
 class LargeInt<8> {
     template<uint16_t M> friend class LargeInt;
-    template<uint16_t M> friend std::ostream& operator<<(std::ostream&, LargeInt<M>&);
+    friend void output_hex(std::ostream&, const LargeInt<8>&, const uint16_t);
+    friend uint64_t to_decimal(const LargeInt<8>&);
 
     /// Stores one single byte of the possibly huge LargeInt instance.
     uint8_t m_value;

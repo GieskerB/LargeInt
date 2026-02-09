@@ -4,7 +4,10 @@
 template<uint16_t N>
 class LargeInt {
     template<uint16_t M> friend class LargeInt;
-    template<uint16_t M> friend std::ostream& operator<<(std::ostream&, LargeInt<M>&);
+    friend uint64_t to_decimal(const LargeInt<16>&);
+    friend uint64_t to_decimal(const LargeInt<32>&);
+    friend uint64_t to_decimal(const LargeInt<64>&);
+    template<uint16_t M> friend void output_hex(std::ostream& os, const LargeInt<M>& number, uint16_t base) ;
 
     static_assert(N >= 8 , "LargeInt size must be at least one byte in size");
     static_assert((N & (N - 1)) == 0, "LargeInt size must be a power of 2 for recursive splitting");
@@ -71,7 +74,6 @@ public:
     LargeInt<N> &operator--();
     LargeInt<N> operator++(int);
     LargeInt<N> operator--(int);
-
 };
 
 // =====================================================================================================================
@@ -121,6 +123,37 @@ LargeInt<N>::LargeInt(const std::string &str_repr) : m_upper{0, branch_side_t::L
         *this *= constants[10];
         *this += constants[c - '0'];
     }
+}
+
+// =====================================================================================================================
+
+inline thread_local LargeInt<8>* p_last_leaf = nullptr;
+
+template<uint16_t N>
+void LargeInt<N>::initialize_pointers(LargeInt<2 * N> *parent) {
+    if (c_branch_side == branch_side_t::ROOT) p_last_leaf = nullptr;
+    p_parent = parent;
+    m_upper.initialize_pointers(this);
+    m_lower.initialize_pointers(this);
+}
+
+template<uint16_t N>
+uint16_t LargeInt<N>::get_msb_index(bool init_call) const {
+    return init_call ? N - m_upper.get_msb_index(false) : m_upper.get_msb_index(false);
+}
+
+template<uint16_t N>
+bool LargeInt<N>::was_overflow() {
+    const bool tmp = m_overflown;
+    m_overflown = false;
+    return tmp;
+}
+
+template<uint16_t N>
+bool LargeInt<N>::was_underflow() {
+    const bool tmp = m_underflown;
+    m_underflown = false;
+    return tmp;
 }
 
 // =====================================================================================================================

@@ -6,7 +6,6 @@
 template<uint16_t N>
 class LargeInt;
 
-// TODO: working output operator
 // TODO: working division operator
 // TODO: propper tests for all operators
 // TODO: documentation
