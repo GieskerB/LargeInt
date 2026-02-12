@@ -1,5 +1,5 @@
 .idea/
+.vscode/
 
-CMakeLists.txt
-tests/lib/
+tests/lib/googletest-1.17.0
 cmake-build-debug/

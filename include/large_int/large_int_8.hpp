@@ -18,6 +18,7 @@ template<>
 class LargeInt<8> {
     template<uint16_t M> friend class LargeInt;
     friend void output_hex(std::ostream&, const LargeInt<8>&, const uint16_t);
+    friend void output_bin(std::ostream&, const LargeInt<8>&, const uint16_t);
     friend uint64_t to_decimal(const LargeInt<8>&);
 
     /// Stores one single byte of the possibly huge LargeInt instance.
@@ -34,11 +35,11 @@ class LargeInt<8> {
 
     LargeInt(uint8_t, branch_side_t);
 
-    void initialize_pointers(LargeInt<16> *);
+    void initialize_pointers(LargeInt<16> * = nullptr, LargeInt<8> ** = nullptr);
     [[nodiscard]] uint16_t get_msb_index(bool = false) const;
 
-    [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t, uint16_t) const;
-    [[nodiscard]] uint8_t get_lower_bits(uint8_t, branch_side_t, uint16_t) const;
+    [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t) const;
+    [[nodiscard]] uint8_t get_lower_bits(uint8_t, branch_side_t) const;
 
 public:
     LargeInt();
@@ -239,41 +240,42 @@ extern LargeInt<32> c;
 
 inline LargeInt<8> &LargeInt<8>::operator<<=(const uint16_t shift) {
     if (shift == 0) return *this;
-
     const uint8_t shift_mod8 = shift == 0 ? 0 : (shift - 1) % 8 + 1;
 
-    m_value <<= shift;
-    // Fill in the missing lower part of the number
-    m_value |= p_right == nullptr ? 0 : p_right->get_upper_bits(shift_mod8, branch_side_t::RIGHT, (shift-1) / 8);
-
+    uint8_t upper_bits, lower_bits;
     if (shift > 8) {
-        // Fill in the missing upper part of the number
-        m_value |= p_right == nullptr ? 0 : p_right->get_lower_bits(
-            8 - shift_mod8, branch_side_t::RIGHT, (shift-1) / 8 - 1);
+        // Entire m_value gets replaced
+        upper_bits = p_right == nullptr ? 0 : p_right->get_lower_bits(shift - 8, branch_side_t::RIGHT) << shift_mod8;
+        lower_bits = p_right == nullptr ? 0 : p_right->get_upper_bits(shift, branch_side_t::RIGHT) >> (8 - shift_mod8);
+    } else {
+        // Only a part gets replaced.
+        upper_bits = m_value << shift; // lower #shift bits are zero
+        lower_bits = p_right == nullptr ? 0 : p_right->m_value >> (8-shift); // upper 8-#shift bits are zero
     }
+    m_value = upper_bits | lower_bits;
 
     if (p_right != nullptr) *p_right <<= shift;
     return *this;
 }
 
 inline LargeInt<8> &LargeInt<8>::operator>>=(const uint16_t shift) {
-    const uint8_t shift_mod8 = shift == 0 ? 0 : ((shift - 1) % 8) + 1;
-
     if (shift == 0) return *this;
 
-    if (shift < 8) {
-        m_value >>= shift;
-        m_value |= p_right == nullptr ? 0 : p_right->get_lower_bits(shift_mod8, branch_side_t::LEFT, 0);;
-    } else if (shift_mod8 == 8) {
-        m_value = p_right == nullptr ? 0 : p_right->get_lower_bits(shift_mod8, branch_side_t::LEFT, shift / 8 - 1);
-    } else {
-        m_value = 0;
-        m_value |=
-                p_right == nullptr ? 0 : p_right->get_upper_bits(8 - shift_mod8, branch_side_t::LEFT, shift / 8 - 1);
-        m_value |= p_right == nullptr ? 0 : p_right->get_lower_bits(shift_mod8, branch_side_t::LEFT, shift / 8);
-    }
+    const uint8_t shift_mod8 = shift == 0 ? 0 : (shift - 1) % 8 + 1;
 
-    if (p_right != nullptr) *p_right >>= shift;
+    uint8_t upper_bits, lower_bits;
+    if (shift > 8) {
+        // Entire m_value gets replaced
+        lower_bits = p_left == nullptr ? 0 : p_left->get_upper_bits(shift - 8, branch_side_t::LEFT) >> shift_mod8;
+        upper_bits = p_left == nullptr ? 0 : p_left->get_lower_bits(shift, branch_side_t::LEFT) << (8 - shift_mod8);
+    } else {
+        // Only a part gets replaced.
+        lower_bits = m_value >> shift; // upper #shift bits are zero
+        upper_bits = p_left == nullptr ? 0 : p_left->m_value << (8-shift); // upper 8-#shift bits are zero
+    }
+    m_value = upper_bits | lower_bits;
+
+    if (p_left != nullptr) *p_left >>= shift;
     return *this;
 }
 

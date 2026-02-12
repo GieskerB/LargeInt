@@ -1,7 +1,3 @@
-//
-// Created by bjarn on 19.01.2025.
-//
-
 #ifndef LARGEINT_UNARY_HPP
 #define LARGEINT_UNARY_HPP
 

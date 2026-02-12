@@ -1,7 +1,3 @@
-//
-// Created by bjarn on 19.01.2025.
-//
-
 #ifndef LARGEINT_GENERAL_COMPARISON_HPP
 #define LARGEINT_GENERAL_COMPARISON_HPP
 

@@ -8,6 +8,7 @@ class LargeInt {
     friend uint64_t to_decimal(const LargeInt<32>&);
     friend uint64_t to_decimal(const LargeInt<64>&);
     template<uint16_t M> friend void output_hex(std::ostream& os, const LargeInt<M>& number, uint16_t base) ;
+    template<uint16_t M> friend void output_bin(std::ostream& os, const LargeInt<M>& number, uint16_t base) ;
 
     static_assert(N >= 8 , "LargeInt size must be at least one byte in size");
     static_assert((N & (N - 1)) == 0, "LargeInt size must be a power of 2 for recursive splitting");
@@ -21,8 +22,8 @@ class LargeInt {
     LargeInt(uint8_t, branch_side_t);
     LargeInt(const LargeInt<N / 2> &);
 
-    void initialize_pointers(LargeInt<2 * N> * = nullptr);
-
+    void initialize_pointers(LargeInt<2 * N> * = nullptr, LargeInt<8>** = nullptr);
+    // static void connect(const LargeInt<N>&, const LargeInt<N>&);
     // [[nodiscard]] uint16_t get_msb_index(bool= true) const;
 
 public:
@@ -127,14 +128,19 @@ LargeInt<N>::LargeInt(const std::string &str_repr) : m_upper{0, branch_side_t::L
 
 // =====================================================================================================================
 
-inline thread_local LargeInt<8>* p_last_leaf = nullptr;
+// inline thread_local LargeInt<8>* p_last_leaf = nullptr;
 
 template<uint16_t N>
-void LargeInt<N>::initialize_pointers(LargeInt<2 * N> *parent) {
-    if (c_branch_side == branch_side_t::ROOT) p_last_leaf = nullptr;
+void LargeInt<N>::initialize_pointers(LargeInt<2 * N> *parent, LargeInt<8>** pp_last_leaf) {
     p_parent = parent;
-    m_upper.initialize_pointers(this);
-    m_lower.initialize_pointers(this);
+    if (pp_last_leaf == nullptr) {
+        LargeInt<8> *p_last_leaf = nullptr;
+        m_upper.initialize_pointers(this, &p_last_leaf);
+        m_lower.initialize_pointers(this, &p_last_leaf);
+    } else {
+        m_upper.initialize_pointers(this, pp_last_leaf);
+        m_lower.initialize_pointers(this, pp_last_leaf);
+    }
 }
 
 template<uint16_t N>

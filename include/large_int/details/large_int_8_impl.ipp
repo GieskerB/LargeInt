@@ -31,20 +31,15 @@ inline LargeInt<8>::LargeInt(const std::string & str_repr) : m_value{0}, m_overf
 
 // =====================================================================================================================
 
-inline void LargeInt<8>::initialize_pointers(LargeInt<16> *parent) {
+inline void LargeInt<8>::initialize_pointers(LargeInt<16> *parent, LargeInt<8> ** pp_last_leaf) {
 
     p_parent = parent;
     if (p_parent != nullptr) {
-        if (p_last_leaf != nullptr) {
-            p_last_leaf->p_right = this;
+        if (*pp_last_leaf != nullptr) {
+            (*pp_last_leaf)->p_right = this;
         }
-        p_left = p_last_leaf;
-        p_last_leaf = this;
-
-        // p_left = p_parent->get_brother(c_branch_side, branch_side_t::LEFT);
-        // p_right = p_parent->get_brother(c_branch_side, branch_side_t::RIGHT);
-    } else {
-        p_last_leaf = nullptr;
+        p_left = *pp_last_leaf;
+        *pp_last_leaf = this;
     }
 }
 
@@ -63,38 +58,44 @@ inline uint16_t LargeInt<8>::get_msb_index(bool init_call) const {
 }
 
 
-inline uint8_t LargeInt<8>::get_upper_bits(const uint8_t num_upper, const branch_side_t direction, const uint16_t total_steps) const {
+inline uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, const branch_side_t direction) const {
     static constexpr std::array<uint8_t, 9> bitmap_lookup{0b00000000,0b10000000, 0b11000000, 0b11100000, 0b11110000,
                                                           0b11111000, 0b11111100, 0b11111110, 0b11111111};
 
-    if (total_steps == 0) return (m_value & bitmap_lookup[num_upper]) >> (8 - num_upper);
+    if (num_upper == 0) return 0;
+
+    if (num_upper < 8 or num_upper == 8 and direction == branch_side_t::RIGHT) {
+        if (direction == branch_side_t::LEFT) num_upper = 8 - num_upper;
+        return m_value & bitmap_lookup[num_upper];
+    }
 
     if (direction == branch_side_t::RIGHT) {
-        if (p_right == nullptr) return 0;
-        return p_right->get_upper_bits(num_upper, direction, total_steps - 1);
+        return p_right == nullptr ? 0 : p_right->get_upper_bits(num_upper - 8, direction);
     }
     if (direction == branch_side_t::LEFT)  {
-        if (p_left == nullptr) return 0;
-        return p_left->get_upper_bits(num_upper, direction, total_steps - 1);
+        return p_left == nullptr ? 0 : p_left->get_upper_bits(num_upper - 8, direction);
     }
     throw std::runtime_error("Can not determine brother in direction NONE");
 }
 
-inline uint8_t LargeInt<8>::get_lower_bits(const uint8_t num_lower, const branch_side_t direction, const uint16_t total_steps) const {
+inline uint8_t LargeInt<8>::get_lower_bits(uint8_t num_lower, const branch_side_t direction) const {
     static constexpr std::array<uint8_t, 9> bitmap_lookup{0b00000000,0b00000001, 0b00000011, 0b00000111, 0b00001111,
                                                           0b00011111, 0b00111111, 0b01111111, 0b11111111};
+    if (num_lower == 0) return 0;
 
-    if (total_steps == 0) return m_value & bitmap_lookup[num_lower] << (8 - num_lower);
+    if (num_lower < 8 or num_lower == 8 and direction == branch_side_t::LEFT) {
+        if (direction == branch_side_t::RIGHT) num_lower = 8 - num_lower;
+        return m_value & bitmap_lookup[num_lower];
+    }
 
     if (direction == branch_side_t::RIGHT) {
-        if (p_right == nullptr) return 0;
-        return p_right->get_lower_bits(num_lower, direction, total_steps - 1);
+        return p_right == nullptr ? 0 : p_right->get_lower_bits(num_lower - 8, direction);
     }
     if (direction == branch_side_t::LEFT)  {
-        if (p_left == nullptr) return 0;
-        return p_left->get_lower_bits(num_lower, direction, total_steps - 1);
+        return p_left == nullptr ? 0 : p_left->get_lower_bits(num_lower - 8, direction);
     }
     throw std::runtime_error("Can not determine brother in direction NONE");
+
 }
 
 

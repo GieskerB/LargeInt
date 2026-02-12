@@ -3,8 +3,7 @@
 #include "include/large_int/large_int.hpp"
 
 int main() {
-    LargeInt<32> number{123};
-
-    std::cout << number << "\n";
-
+    LargeInt<16> num{"10000"};
+    std::cout << num << std::endl;
+    return 0;
 }

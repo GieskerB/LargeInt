@@ -1,7 +1,3 @@
-//
-// Created by bjarn on 19.01.2025.
-//
-
 #ifndef LARGEINT_GENERAL_ASSIGNMENT_HPP
 #define LARGEINT_GENERAL_ASSIGNMENT_HPP
 
@@ -68,10 +64,10 @@ div_three_halves_by_two(const LargeInt<N / 4> &a1, const LargeInt<N / 4> &a2, co
     auto D = q * b2;
     auto R = LargeInt<N>{c, a3} - D;
     if (R < 0) { // q is too large by at least one
-        q--;
+        --q;
         R += B;
         if (R < 0) { // q is still too large
-            q--;
+            --q;
             R += B;
         }
     }
