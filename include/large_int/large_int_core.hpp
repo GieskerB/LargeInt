@@ -21,10 +21,11 @@ class LargeInt {
 
     LargeInt(uint8_t, branch_side_t);
     LargeInt(const LargeInt<N / 2> &);
+    LargeInt(const LargeInt<N / 2> &, int);
+    LargeInt(const LargeInt<N / 2> &,const LargeInt<N / 2> &);
 
     void initialize_pointers(LargeInt<2 * N> * = nullptr, LargeInt<8>** = nullptr);
-    // static void connect(const LargeInt<N>&, const LargeInt<N>&);
-    // [[nodiscard]] uint16_t get_msb_index(bool= true) const;
+    void multiply_by_ten(uint8_t carry = 0);
 
 public:
     LargeInt();
@@ -32,11 +33,8 @@ public:
     LargeInt(const LargeInt &);
     explicit LargeInt (const std::string&);
 
-    [[nodiscard]] uint16_t get_msb_index(bool= true) const;
-
     bool was_overflow();
     bool was_underflow();
-
 
     // arithmetic
     LargeInt<N> operator+() const;
@@ -114,15 +112,27 @@ LargeInt<N>::LargeInt(const LargeInt<N / 2> &lower) : m_upper{0, branch_side_t::
 }
 
 template<uint16_t N>
+LargeInt<N>::LargeInt(const LargeInt<N / 2> &upper,int) : m_upper{upper}, m_lower{0,branch_side_t::RIGHT},
+                                                      m_overflown{false}, m_underflown{false},
+                                                      c_branch_side{branch_side_t::ROOT}, p_parent{nullptr} {
+    initialize_pointers();
+}
+
+template<uint16_t N>
+LargeInt<N>::LargeInt(const LargeInt<N / 2> &upper,const LargeInt<N / 2> &lower) : m_upper{upper}, m_lower{lower},
+                                                      m_overflown{false}, m_underflown{false},
+                                                      c_branch_side{branch_side_t::ROOT}, p_parent{nullptr} {
+    initialize_pointers();
+}
+
+template<uint16_t N>
 LargeInt<N>::LargeInt(const std::string &str_repr) : m_upper{0, branch_side_t::LEFT}, m_lower{0, branch_side_t::RIGHT},
                                                      m_overflown{false}, m_underflown{false},
                                                      c_branch_side{branch_side_t::ROOT}, p_parent{nullptr} {
     initialize_pointers();
-    static const std::array<LargeInt<N>, 11> constants{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     for (const char c: str_repr) {
-        *this *= constants[10];
-        *this += constants[c - '0'];
+        this->multiply_by_ten(c - '0');
     }
 }
 
@@ -144,8 +154,8 @@ void LargeInt<N>::initialize_pointers(LargeInt<2 * N> *parent, LargeInt<8>** pp_
 }
 
 template<uint16_t N>
-uint16_t LargeInt<N>::get_msb_index(bool init_call) const {
-    return init_call ? N - m_upper.get_msb_index(false) : m_upper.get_msb_index(false);
+void LargeInt<N>::multiply_by_ten(uint8_t carry) {
+    m_lower.multiply_by_ten(carry);
 }
 
 template<uint16_t N>

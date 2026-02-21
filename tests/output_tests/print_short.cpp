@@ -30,7 +30,6 @@ TEST(output_tests, print_345) {
     EXPECT_EQ("0159 - [345]", ss.str());
 }
 
-
 TEST(output_tests, print_2222) {
     LargeInt<16> num{"2222"};
     std::stringstream ss;

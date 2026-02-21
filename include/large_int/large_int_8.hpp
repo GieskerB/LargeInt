@@ -21,6 +21,10 @@ class LargeInt<8> {
     friend void output_bin(std::ostream&, const LargeInt<8>&, const uint16_t);
     friend uint64_t to_decimal(const LargeInt<8>&);
 
+    friend void test(const LargeInt<8>&);
+
+    int m_counter;
+
     /// Stores one single byte of the possibly huge LargeInt instance.
     uint8_t m_value;
     /// Temporal values used to make addition and subtraction easier.
@@ -36,7 +40,7 @@ class LargeInt<8> {
     LargeInt(uint8_t, branch_side_t);
 
     void initialize_pointers(LargeInt<16> * = nullptr, LargeInt<8> ** = nullptr);
-    [[nodiscard]] uint16_t get_msb_index(bool = false) const;
+    void multiply_by_ten(uint8_t carry = 0);
 
     [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t) const;
     [[nodiscard]] uint8_t get_lower_bits(uint8_t, branch_side_t) const;

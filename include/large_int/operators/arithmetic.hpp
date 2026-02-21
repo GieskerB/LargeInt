@@ -29,18 +29,45 @@ LargeInt<N> LargeInt<N>::operator-(const LargeInt<N> &other) const {
 
 template<uint16_t N>
 LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
-    const LargeInt<N>& upper_times_upper = m_upper * other.m_upper;
-    const LargeInt<N>& lower_times_lower = m_lower * other.m_lower;
 
-    LargeInt<2 * N> result{};
-    result.m_upper = upper_times_upper;
-    result.m_lower = lower_times_lower;
-    result.initialize_pointers();
+    LargeInt<N / 2> sum_this {m_upper};
+    sum_this += m_lower;
+    const bool carry_this = sum_this.was_overflow();
 
-    LargeInt<2 * N> special_product = (m_upper + m_lower) * (other.m_upper + other.m_lower);
-    special_product -= lower_times_lower;
+    LargeInt<N / 2> sum_other {other.m_upper};
+    sum_other += other.m_lower;
+    const bool carry_other = sum_other.was_overflow();
+
+    const LargeInt<N>& sum_prod {sum_this * sum_other};
+    LargeInt<2 * N> special_product {sum_prod};
+
+
+    if (carry_this) {
+        LargeInt<N> term_N {sum_other};
+        LargeInt<2 * N> term {term_N}; // Step-by-step to prevent double implicit conversion errors
+        term <<= static_cast<uint16_t>(N / 2);
+        special_product += term;
+    }
+    if (carry_other) {
+        LargeInt<N> term_N {sum_this};
+        LargeInt<2 * N> term {term_N};
+        term <<= static_cast<uint16_t>(N / 2);
+        special_product += term;
+    }
+    if (carry_this && carry_other) {
+        LargeInt<2 * N> term {1};
+        term <<= N;
+        special_product += term;
+    }
+
+    const LargeInt<N>& upper_times_upper {m_upper * other.m_upper};
+    const LargeInt<N>& lower_times_lower {m_lower * other.m_lower};
+
     special_product -= upper_times_upper;
+    special_product -= lower_times_lower;
     special_product <<= static_cast<uint16_t> (N / 2);
+
+    LargeInt<2 * N> result{upper_times_upper,lower_times_lower};
     result += special_product;
     return result;
 }

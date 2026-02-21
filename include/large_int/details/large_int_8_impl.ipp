@@ -10,19 +10,18 @@
 
 inline LargeInt<8>::LargeInt() : LargeInt{0} {}
 
-
 inline LargeInt<8>::LargeInt(uint8_t init_value) : LargeInt(init_value, branch_side_t::ROOT) {}
 
 inline LargeInt<8>::LargeInt(uint8_t init_value, branch_side_t b_side)
         : m_value{init_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
-          p_parent{nullptr}, c_branch_side{b_side} {}
+          p_parent{nullptr}, c_branch_side{b_side}, m_counter(counter++) {}
 
 inline LargeInt<8>::LargeInt(const LargeInt<8> &copy)
         : m_value{copy.m_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
           p_parent{nullptr}, c_branch_side{copy.c_branch_side} {}
 
 inline LargeInt<8>::LargeInt(const std::string & str_repr) : m_value{0}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
-          p_parent{nullptr}, c_branch_side{branch_side_t::ROOT}{
+          p_parent{nullptr}, c_branch_side{branch_side_t::ROOT}, m_counter(counter++){
     for (const char c : str_repr) {
         m_value *= 10;
         m_value += c - '0';
@@ -43,20 +42,16 @@ inline void LargeInt<8>::initialize_pointers(LargeInt<16> *parent, LargeInt<8> *
     }
 }
 
-inline uint16_t LargeInt<8>::get_msb_index(bool init_call) const {
-    if (m_value >= 128) return 0;
-    if (m_value >= 64) return 1;
-    if (m_value >= 32) return 2;
-    if (m_value >= 16) return 3;
-    if (m_value >= 8) return 4;
-    if (m_value >= 4) return 5;
-    if (m_value >= 2) return 6;
-    if (m_value >= 1) return 7;
+inline void LargeInt<8>::multiply_by_ten(uint8_t carry) {
+    static const std::array<LargeInt<8>, 11> constants{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-    if (p_right == nullptr) return 8;
-    return p_right->get_msb_index() + 8;
+    const uint16_t tmp = m_value * 10;
+    m_value = static_cast<uint8_t>(tmp);
+    *this+= constants[carry];
+    carry = tmp >> 8;
+    if (was_overflow()) ++carry;
+    if (p_left != nullptr and !(carry == 0 and m_value == 0)) p_left->multiply_by_ten(carry);
 }
-
 
 inline uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, const branch_side_t direction) const {
     static constexpr std::array<uint8_t, 9> bitmap_lookup{0b00000000,0b10000000, 0b11000000, 0b11100000, 0b11110000,
