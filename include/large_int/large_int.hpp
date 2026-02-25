@@ -10,6 +10,8 @@ static int counter = 0;
 
 // TODO: working division operator
 // TODO: propper tests for all operators
+      // shift operator
+      // sub operator
 // TODO: documentation
 // TODO: optimization
       // reduce #of LargeInt initilaizations

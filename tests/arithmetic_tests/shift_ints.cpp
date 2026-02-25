@@ -48,7 +48,7 @@ TEST(edge_case_tests, crawl_bits_across_boundary) {
     ASSERT_EQ("0aa02000 - [178266112]", ss.str());
 }
 
-TEST(edge_case_tests, fill_lower_and_shift) {
+TEST(edge_case_tests , fill_lower_and_shift) {
     LargeInt<32> a{255};
     a <<= 9;
     a += LargeInt<32>{255};

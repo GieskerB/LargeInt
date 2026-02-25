@@ -50,7 +50,7 @@ inline void LargeInt<8>::multiply_by_ten(uint8_t carry) {
     *this+= constants[carry];
     carry = tmp >> 8;
     if (was_overflow()) ++carry;
-    if (p_left != nullptr and !(carry == 0 and m_value == 0)) p_left->multiply_by_ten(carry);
+    if (p_left != nullptr) p_left->multiply_by_ten(carry);
 }
 
 inline uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, const branch_side_t direction) const {

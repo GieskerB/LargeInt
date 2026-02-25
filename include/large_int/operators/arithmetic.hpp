@@ -27,6 +27,16 @@ LargeInt<N> LargeInt<N>::operator-(const LargeInt<N> &other) const {
     return res;
 }
 
+/**
+ * Karatsuba multiplication: Divide and conquer.
+ * X×Y = (X_H×Y_H) ≪ 128 + ( (X_L×YH) + (X_H×Y_L) ) ≪ 64 + (X_L×Y_L)
+ * => 4 mults, 3 adds, 2 shifts (BAD)
+ * X×Y = (X_H×Y_H) ≪ 128 + ( (X_H + X_L)(Y_H + Y_L) − (X_H×Y_H) − (X_L×Y_L) ) ≪ 64 + (X_L×Y_L)
+ * => 3 mults, 6 adds, 2 shifts (GOOD)
+ *
+ * @param other
+ * @return
+ */
 template<uint16_t N>
 LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
 
@@ -65,6 +75,7 @@ LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
 
     special_product -= upper_times_upper;
     special_product -= lower_times_lower;
+
     special_product <<= static_cast<uint16_t> (N / 2);
 
     LargeInt<2 * N> result{upper_times_upper,lower_times_lower};
