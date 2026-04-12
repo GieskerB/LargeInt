@@ -1,5 +1,5 @@
-#ifndef LARGEINT_LARGE_INT_BASE_HPP
-#define LARGEINT_LARGE_INT_BASE_HPP
+#ifndef LARGEINT_LARGE_INT_CORE_HPP
+#define LARGEINT_LARGE_INT_CORE_HPP
 
 template<uint16_t N>
 class LargeInt {
@@ -138,8 +138,6 @@ LargeInt<N>::LargeInt(const std::string &str_repr) : m_upper{0, branch_side_t::L
 
 // =====================================================================================================================
 
-// inline thread_local LargeInt<8>* p_last_leaf = nullptr;
-
 template<uint16_t N>
 void LargeInt<N>::initialize_pointers(LargeInt<2 * N> *parent, LargeInt<8>** pp_last_leaf) {
     p_parent = parent;
@@ -179,4 +177,4 @@ bool LargeInt<N>::was_underflow() {
 #include "operators/comparison.hpp"
 #include "operators/unary.hpp"
 
-#endif //LARGEINT_LARGE_INT_BASE_HPP
+#endif //LARGEINT_LARGE_INT_CORE_HPP

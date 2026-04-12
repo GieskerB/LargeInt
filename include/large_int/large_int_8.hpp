@@ -16,12 +16,14 @@
  */
 template<>
 class LargeInt<8> {
-    template<uint16_t M> friend class LargeInt;
-    friend void output_hex(std::ostream&, const LargeInt<8>&, const uint16_t);
-    friend void output_bin(std::ostream&, const LargeInt<8>&, const uint16_t);
-    friend uint64_t to_decimal(const LargeInt<8>&);
+    template<uint16_t M> friend
+    class LargeInt;
 
-    friend void test(const LargeInt<8>&);
+    friend void output_hex(std::ostream &, const LargeInt<8> &, const uint16_t);
+    friend void output_bin(std::ostream &, const LargeInt<8> &, const uint16_t);
+    friend uint64_t to_decimal(const LargeInt<8> &);
+
+    friend void test(const LargeInt<8> &);
 
     int m_counter;
 
@@ -49,7 +51,7 @@ public:
     LargeInt();
     LargeInt(uint8_t);
     LargeInt(const LargeInt<8> &);
-    explicit LargeInt (const std::string&);
+    explicit LargeInt(const std::string &);
 
     bool was_overflow();
     bool was_underflow();
@@ -124,7 +126,7 @@ inline LargeInt<8> LargeInt<8>::operator-(const LargeInt<8> &other) const {
 inline LargeInt<16> LargeInt<8>::operator*(const LargeInt<8> &other) const {
     uint16_t mult_res = static_cast<uint16_t>(m_value) * static_cast<uint16_t>(other.m_value);
     LargeInt<16> res;
-    res.m_upper.m_value = (mult_res& 0xFF00) >> 8;
+    res.m_upper.m_value = (mult_res & 0xFF00) >> 8;
     res.m_lower.m_value = mult_res & 0xFF;
     return res;
 }
@@ -146,17 +148,20 @@ inline LargeInt<8> LargeInt<8>::operator~() const {
     res.m_value = ~res.m_value;
     return res;
 }
-inline LargeInt<8> LargeInt<8>::operator&(const LargeInt<8> & other)const {
+
+inline LargeInt<8> LargeInt<8>::operator&(const LargeInt<8> &other) const {
     LargeInt<8> res{*this};
     res &= other;
     return res;
 }
-inline LargeInt<8> LargeInt<8>::operator|(const LargeInt<8> & other)const {
+
+inline LargeInt<8> LargeInt<8>::operator|(const LargeInt<8> &other) const {
     LargeInt<8> res{*this};
     res |= other;
     return res;
 }
-inline LargeInt<8> LargeInt<8>::operator^(const LargeInt<8> & other)const {
+
+inline LargeInt<8> LargeInt<8>::operator^(const LargeInt<8> &other) const {
     LargeInt<8> res{*this};
     res ^= other;
     return res;
@@ -254,7 +259,7 @@ inline LargeInt<8> &LargeInt<8>::operator<<=(const uint16_t shift) {
     } else {
         // Only a part gets replaced.
         upper_bits = m_value << shift; // lower #shift bits are zero
-        lower_bits = p_right == nullptr ? 0 : p_right->m_value >> (8-shift); // upper 8-#shift bits are zero
+        lower_bits = p_right == nullptr ? 0 : p_right->m_value >> (8 - shift); // upper 8-#shift bits are zero
     }
     m_value = upper_bits | lower_bits;
 
@@ -275,7 +280,7 @@ inline LargeInt<8> &LargeInt<8>::operator>>=(const uint16_t shift) {
     } else {
         // Only a part gets replaced.
         lower_bits = m_value >> shift; // upper #shift bits are zero
-        upper_bits = p_left == nullptr ? 0 : p_left->m_value << (8-shift); // upper 8-#shift bits are zero
+        upper_bits = p_left == nullptr ? 0 : p_left->m_value << (8 - shift); // upper 8-#shift bits are zero
     }
     m_value = upper_bits | lower_bits;
 
@@ -296,16 +301,16 @@ inline std::strong_ordering LargeInt<8>::operator<=>(const LargeInt<8> &other) c
 // =====================================================================================================================
 
 inline LargeInt<8> &LargeInt<8>::operator++() {
-    *this+=1;
+    *this += 1;
     return *this;
 }
 
 inline LargeInt<8> &LargeInt<8>::operator--() {
-    *this-=1;
+    *this -= 1;
     return *this;
 }
 
-inline LargeInt<8> LargeInt<8>::operator++(int)  {
+inline LargeInt<8> LargeInt<8>::operator++(int) {
     LargeInt<8> res{*this};
     ++*this;
     return res;
