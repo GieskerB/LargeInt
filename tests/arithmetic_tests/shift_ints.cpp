@@ -93,6 +93,5 @@ TEST(edge_case_tests, complex_interleaved_fragmentation) {
 
     std::stringstream ss;
     ss << a;
-    // 104883600
     ASSERT_EQ("06406590 - [104883600]", ss.str());
 }
