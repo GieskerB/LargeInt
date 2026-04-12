@@ -4,8 +4,8 @@ add_executable(ArithmeticTests
         add.cpp
         sub.cpp
         mul.cpp
-#        div.cpp
-#        mod.cpp
+        div.cpp
+        mod.cpp
         shift_ints.cpp
         bitwise.cpp)
 

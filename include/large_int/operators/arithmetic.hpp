@@ -83,18 +83,84 @@ LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
     return result;
 }
 
+inline std::pair<LargeInt<8>,LargeInt<16>> div_three_halves_by_two(const LargeInt<8> &a1, const LargeInt<8> &a2, const LargeInt<8> &a3, const LargeInt<8> &b1, const LargeInt<8> &b2) {
+
+    const LargeInt<16>a12{a1,a2};
+    const LargeInt<16>B{b1,b2};
+
+    LargeInt<8> q = (a12 / b1).m_lower; // 16o information lost
+    LargeInt<8> c = (a12 - q * b1).m_lower; // Apparently no information loss either
+    LargeInt<16> D = q * b2;
+    auto R = LargeInt<16>(c,a3)-D;
+    if(R.was_underflow()) { // q is too large by at least one
+        q--;
+        R+=B;
+
+        if(R.was_underflow()) { // q is still too large
+            q--;
+            R+= B; // new R is correct
+        }
+    }
+    return {q, R};
+}
+
+template<uint16_t N>
+std::pair<LargeInt<N/2>,LargeInt<N>> div_three_halves_by_two(const LargeInt<N/2> &a1, const LargeInt<N/2> &a2, const LargeInt<N/2> &a3, const LargeInt<N/2> &b1, const LargeInt<N/2> &b2) {
+
+    const LargeInt<N>a12{a1,a2};
+    const LargeInt<N>B{b1,b2};
+
+    LargeInt<N/2> q = (a12 / b1).m_lower; // No information lost
+    LargeInt<N/2> c = (a12 - q * b1).m_lower; // Apparently no information loss either
+    LargeInt<N> D = q * b2;
+    auto R = LargeInt<N>(c,a3)-D;
+    if(R.was_underflow()) { // q is too large by at least one
+        q--;
+        R+=B;
+
+        if(R.was_underflow()) { // q is still too large
+            q--;
+            R+= B; // new R is correct
+        }
+    }
+    return {q, R};
+}
+
+inline std::pair<LargeInt<8>,LargeInt<8>> div_two_digits_by_one(const LargeInt<8> &AH, const LargeInt<8> &AL, const LargeInt<8> &B) {
+    const uint16_t A = AH.m_value << 8 | AL.m_value;
+    return {A / B.m_value, A % B.m_value};
+}
+
+template<uint16_t N>
+std::pair<LargeInt<N>,LargeInt<N>> div_two_digits_by_one(const LargeInt<N> &AH, const LargeInt<N> &AL, const LargeInt<N> &B) {
+    const LargeInt<N/2> &a1 = AH.m_upper;
+    const LargeInt<N/2> &a2 = AH.m_lower;
+    const LargeInt<N/2> &a3 = AL.m_upper;
+    const LargeInt<N/2> &a4 = AL.m_lower;
+    const LargeInt<N/2> &b1 = B.m_upper;
+    const LargeInt<N/2> &b2 = B.m_lower;
+
+    std::pair<LargeInt<N/2>,LargeInt<N>> q1R = div_three_halves_by_two(a1,a2,a3,b1,b2);
+    const LargeInt<N/2> &r1 = q1R.second.m_upper;
+    const LargeInt<N/2> &r2 = q1R.second.m_lower;
+    std::pair<LargeInt<N/2>,LargeInt<N>> q2S = div_three_halves_by_two(r1, r2, a4, b1, b2);
+    const LargeInt<N> Q (q1R.first, q2S.first);
+
+    return {Q, q2S.second};
+}
+
+// TODO Division: Burnikel-Ziegler Algorithm
+// https://pure.mpg.de/rest/items/item_1819444_4/component/file_2599480/content
 template<uint16_t  N>
 LargeInt<N> LargeInt<N>::operator/(const LargeInt<N>& other) const{
-    LargeInt<N> res{*this};
-    res /= other;
-    return res;
+    auto pair = div_two_digits_by_one(m_upper,m_lower, other.m_lower);
+    return LargeInt<N>(pair.first);
 }
 
 template<uint16_t  N>
 LargeInt<N> LargeInt<N>::operator%(const LargeInt<N>& other) const{
-    LargeInt<N> res{*this};
-    res %= other;
-    return res;
+    auto pair = div_two_digits_by_one(m_upper,m_lower, other.m_lower);
+    return LargeInt<N>(pair.second);
 }
 
 template<uint16_t  N>

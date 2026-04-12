@@ -17,7 +17,6 @@ LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &copy) {
     return *this;
 }
 
-
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator+=(const LargeInt<N> &other) {
     m_lower += other.m_lower;
@@ -33,7 +32,6 @@ LargeInt<N> &LargeInt<N>::operator+=(const LargeInt<N> &other) {
 
     return *this;
 }
-
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator-=(const LargeInt<N> &other) {
@@ -59,15 +57,13 @@ LargeInt<N> &LargeInt<N>::operator*=(const LargeInt<N> &other) {
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator/=(const LargeInt<N> &other) {
-    // TODO Division: Burnikel-Ziegler Algorithm
-    // https://pure.mpg.de/rest/items/item_1819444_4/component/file_2599480/content
-    throw std::runtime_error("Not implemented");
+    throw std::runtime_error("not implemented");
     return *this;
 }
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator%=(const LargeInt<N> &other) {
-    throw std::runtime_error("Not implemented");
+    throw std::runtime_error("not implemented");
     return *this;
 }
 

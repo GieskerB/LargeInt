@@ -14,14 +14,14 @@ inline LargeInt<8>::LargeInt(uint8_t init_value) : LargeInt(init_value, branch_s
 
 inline LargeInt<8>::LargeInt(uint8_t init_value, branch_side_t b_side)
         : m_value{init_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
-          p_parent{nullptr}, c_branch_side{b_side}, m_counter(counter++) {}
+          p_parent{nullptr}, c_branch_side{b_side} {}
 
 inline LargeInt<8>::LargeInt(const LargeInt<8> &copy)
         : m_value{copy.m_value}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
           p_parent{nullptr}, c_branch_side{copy.c_branch_side} {}
 
 inline LargeInt<8>::LargeInt(const std::string & str_repr) : m_value{0}, m_overflown{false}, m_underflown{false}, p_left{nullptr}, p_right{nullptr},
-          p_parent{nullptr}, c_branch_side{branch_side_t::ROOT}, m_counter(counter++){
+          p_parent{nullptr}, c_branch_side{branch_side_t::ROOT}{
     for (const char c : str_repr) {
         m_value *= 10;
         m_value += c - '0';
@@ -92,7 +92,6 @@ inline uint8_t LargeInt<8>::get_lower_bits(uint8_t num_lower, const branch_side_
     throw std::runtime_error("Can not determine brother in direction NONE");
 
 }
-
 
 inline bool LargeInt<8>::was_overflow() {
     const bool tmp = m_overflown;

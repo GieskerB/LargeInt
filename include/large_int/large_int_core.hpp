@@ -7,8 +7,11 @@ class LargeInt {
     friend uint64_t to_decimal(const LargeInt<16>&);
     friend uint64_t to_decimal(const LargeInt<32>&);
     friend uint64_t to_decimal(const LargeInt<64>&);
-    template<uint16_t M> friend void output_hex(std::ostream& os, const LargeInt<M>& number, uint16_t base) ;
-    template<uint16_t M> friend void output_bin(std::ostream& os, const LargeInt<M>& number, uint16_t base) ;
+    template<uint16_t M> friend void output_hex(std::ostream& os, const LargeInt<M>& number, uint16_t base);
+    template<uint16_t M> friend void output_bin(std::ostream& os, const LargeInt<M>& number, uint16_t base);
+    template<uint16_t M> friend std::pair<LargeInt<M>,LargeInt<M>> div_two_digits_by_one(const LargeInt<M> &, const LargeInt<M> &, const LargeInt<M> &);
+    template<uint16_t M> friend std::pair<LargeInt<M/2>,LargeInt<M>> div_three_halves_by_two(const LargeInt<M/2> &, const LargeInt<M/2> &, const LargeInt<M/2> &, const LargeInt<M/2> &, const LargeInt<M/2> &);
+    friend std::pair<LargeInt<8>,LargeInt<16>> div_three_halves_by_two(const LargeInt<8> &, const LargeInt<8> &, const LargeInt<8> &, const LargeInt<8> &, const LargeInt<8> &);
 
     static_assert(N >= 8 , "LargeInt size must be at least one byte in size");
     static_assert((N & (N - 1)) == 0, "LargeInt size must be a power of 2 for recursive splitting");
