@@ -57,13 +57,13 @@ LargeInt<N> &LargeInt<N>::operator*=(const LargeInt<N> &other) {
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator/=(const LargeInt<N> &other) {
-    throw std::runtime_error("not implemented");
+    *this = *this / other;
     return *this;
 }
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator%=(const LargeInt<N> &other) {
-    throw std::runtime_error("not implemented");
+    *this = *this % other;
     return *this;
 }
 

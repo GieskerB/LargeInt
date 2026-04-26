@@ -1,6 +1,17 @@
 #ifndef LARGEINT_LARGE_INT_CORE_HPP
 #define LARGEINT_LARGE_INT_CORE_HPP
 
+namespace bz_algo {
+    template<uint16_t N>
+    std::pair<LargeInt<N/2>, LargeInt<N/2>> div_2n_1n(const LargeInt<N>& A, const LargeInt<N/2>& B);
+
+    template<uint16_t N>
+    std::pair<LargeInt<N/2>, LargeInt<N>> div_3n_2n(const LargeInt<N>& A_12, const LargeInt<N/2>& A_3, const LargeInt<N>& B);
+
+    template<uint16_t N>
+    std::pair<LargeInt<N>, LargeInt<N>> div_mod_bz(const LargeInt<N>& numerator, const LargeInt<N>& denominator);
+}
+
 template<uint16_t N>
 class LargeInt {
     template<uint16_t M> friend class LargeInt;
@@ -9,9 +20,10 @@ class LargeInt {
     friend uint64_t to_decimal(const LargeInt<64>&);
     template<uint16_t M> friend void output_hex(std::ostream& os, const LargeInt<M>& number, uint16_t base);
     template<uint16_t M> friend void output_bin(std::ostream& os, const LargeInt<M>& number, uint16_t base);
-    template<uint16_t M> friend std::pair<LargeInt<M>,LargeInt<M>> div_two_digits_by_one(const LargeInt<M> &, const LargeInt<M> &, const LargeInt<M> &);
-    template<uint16_t M> friend std::pair<LargeInt<M/2>,LargeInt<M>> div_three_halves_by_two(const LargeInt<M/2> &, const LargeInt<M/2> &, const LargeInt<M/2> &, const LargeInt<M/2> &, const LargeInt<M/2> &);
-    friend std::pair<LargeInt<8>,LargeInt<16>> div_three_halves_by_two(const LargeInt<8> &, const LargeInt<8> &, const LargeInt<8> &, const LargeInt<8> &, const LargeInt<8> &);
+    template<uint16_t M> friend std::pair<LargeInt<M/2>, LargeInt<M/2>> bz_algo::div_2n_1n(const LargeInt<M>& A, const LargeInt<M/2>& B);
+    template<uint16_t M> friend std::pair<LargeInt<M/2>, LargeInt<M>> bz_algo::div_3n_2n(const LargeInt<M>& A_12, const LargeInt<M/2>& A_3, const LargeInt<M>& B);
+    template<uint16_t M> friend std::pair<LargeInt<M>, LargeInt<M>> bz_algo::div_mod_bz(const LargeInt<M>& numerator, const LargeInt<M>& denominator);
+
 
     static_assert(N >= 8 , "LargeInt size must be at least one byte in size");
     static_assert((N & (N - 1)) == 0, "LargeInt size must be a power of 2 for recursive splitting");

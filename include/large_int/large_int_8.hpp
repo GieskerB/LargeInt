@@ -22,7 +22,6 @@ class LargeInt<8> {
     friend void output_hex(std::ostream &, const LargeInt<8> &, const uint16_t);
     friend void output_bin(std::ostream &, const LargeInt<8> &, const uint16_t);
     friend uint64_t to_decimal(const LargeInt<8> &);
-    friend std::pair<LargeInt<8>,LargeInt<8>> div_two_digits_by_one(const LargeInt<8> &, const LargeInt<8> &, const LargeInt<8> &);
 
     /// Stores one single byte of the possibly huge LargeInt instance.
     uint8_t m_value;
@@ -43,8 +42,6 @@ class LargeInt<8> {
 
     [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t) const;
     [[nodiscard]] uint8_t get_lower_bits(uint8_t, branch_side_t) const;
-
-    std::pair<LargeInt<8>,LargeInt<8>> div_two_digits_by_one(const LargeInt<8> &,const LargeInt<8> &,const LargeInt<8> &);
 
 public:
     LargeInt();
