@@ -6,15 +6,9 @@
 template<uint16_t N>
 class LargeInt;
 
-static int counter = 0;
-
-// TODO: working division operator
-// TODO: propper tests for all operators
-      // shift operator
-      // sub operator
 // TODO: documentation
 // TODO: optimization
-      // reduce #of LargeInt initilaizations
+      // reduce #of LargeInt initializations
       // Move semantic
       // initialize_pointers() Overhead
 

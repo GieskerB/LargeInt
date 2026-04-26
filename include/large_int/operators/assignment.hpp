@@ -1,8 +1,6 @@
 #ifndef LARGEINT_GENERAL_ASSIGNMENT_HPP
 #define LARGEINT_GENERAL_ASSIGNMENT_HPP
 
-// TODO 11
-
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &copy) {
     if (&copy == this) {
