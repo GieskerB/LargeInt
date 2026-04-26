@@ -40,8 +40,8 @@ class LargeInt<8> {
     void initialize_pointers(LargeInt<16> * = nullptr, LargeInt<8> ** = nullptr);
     void multiply_by_ten(uint8_t carry = 0);
 
-    [[nodiscard]] uint8_t get_upper_bits(uint8_t, branch_side_t) const;
-    [[nodiscard]] uint8_t get_lower_bits(uint8_t, branch_side_t) const;
+    [[nodiscard]] uint8_t get_upper_bits(uint16_t, branch_side_t) const;
+    [[nodiscard]] uint8_t get_lower_bits(uint16_t, branch_side_t) const;
 
 public:
     LargeInt();

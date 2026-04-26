@@ -53,7 +53,7 @@ inline void LargeInt<8>::multiply_by_ten(uint8_t carry) {
     if (p_left != nullptr) p_left->multiply_by_ten(carry);
 }
 
-inline uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, const branch_side_t direction) const {
+inline uint8_t LargeInt<8>::get_upper_bits(uint16_t num_upper, const branch_side_t direction) const {
     static constexpr std::array<uint8_t, 9> bitmap_lookup{0b00000000,0b10000000, 0b11000000, 0b11100000, 0b11110000,
                                                           0b11111000, 0b11111100, 0b11111110, 0b11111111};
 
@@ -73,7 +73,7 @@ inline uint8_t LargeInt<8>::get_upper_bits(uint8_t num_upper, const branch_side_
     throw std::runtime_error("Can not determine brother in direction NONE");
 }
 
-inline uint8_t LargeInt<8>::get_lower_bits(uint8_t num_lower, const branch_side_t direction) const {
+inline uint8_t LargeInt<8>::get_lower_bits(uint16_t num_lower, const branch_side_t direction) const {
     static constexpr std::array<uint8_t, 9> bitmap_lookup{0b00000000,0b00000001, 0b00000011, 0b00000111, 0b00001111,
                                                           0b00011111, 0b00111111, 0b01111111, 0b11111111};
     if (num_lower == 0) return 0;
