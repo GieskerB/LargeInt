@@ -1,5 +1,5 @@
-#ifndef LARGEINT_LARGE_INT_8_HPP
-#define LARGEINT_LARGE_INT_8_HPP
+#ifndef LARGE_INT_8_HPP
+#define LARGE_INT_8_HPP
 
 #include <compare>
 #include <string>
@@ -339,7 +339,7 @@ public:
     }
 };
 
-#include "details/large_int_8_impl.hpp"
-#include "details/large_int_8_operators.hpp"
+#include "details/member_8.hpp"
+#include "operators/all_8.hpp"
 
-#endif //LARGEINT_LARGE_INT_8_HPP
+#endif //LARGE_INT_8_HPP

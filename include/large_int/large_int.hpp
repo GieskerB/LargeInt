@@ -1,5 +1,5 @@
-#ifndef LARGEINT_LARGE_INT_HPP
-#define LARGEINT_LARGE_INT_HPP
+#ifndef LARGE_INT_HPP
+#define LARGE_INT_HPP
 
 #include <cstdint>
 
@@ -15,6 +15,6 @@ class LargeInt;
 #include "large_int_8.hpp"
 #include "large_int_core.hpp"
 
-#include "operators/output.hpp"
+#include "large_int/operators/output.hpp"
 
-#endif //LARGEINT_LARGE_INT_HPP
+#endif //LARGE_INT_HPP

@@ -1,13 +1,13 @@
-#ifndef LARGEINT_OUTPUT_HPP
-#define LARGEINT_OUTPUT_HPP
+#ifndef LARGE_INT_OPERATORS_CORE_OUTPUT_HPP
+#define LARGE_INT_OPERATORS_CORE_OUTPUT_HPP
 
 #include <cstdint>
 #include <ostream>
 #include <iomanip>
 #include <bitset>
 
-#include "../large_int_core.hpp"
-#include "../large_int_8.hpp"
+#include "large_int/large_int_core.hpp"
+#include "large_int/large_int_8.hpp"
 
 
 inline uint64_t to_decimal(const LargeInt<8>& number) {
@@ -70,4 +70,4 @@ template<uint16_t N> std::ostream &operator<<(std::ostream& os, const LargeInt<N
     return os;
 }
 
-#endif //LARGEINT_OUTPUT_HPP
+#endif //LARGE_INT_OPERATORS_CORE_OUTPUT_HPP

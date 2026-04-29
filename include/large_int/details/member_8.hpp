@@ -1,5 +1,5 @@
-#ifndef LARGEINT_LARGE_INT_8_IMPL_HPP
-#define LARGEINT_LARGE_INT_8_IMPL_HPP
+#ifndef LARGE_INT_DETAILS_MEMBER_8_HPP
+#define LARGE_INT_DETAILS_MEMBER_8_HPP
 
 #include "../large_int_8.hpp"
 #include "../large_int_core.hpp"
@@ -108,4 +108,4 @@ inline bool LargeInt<8>::was_underflow() {
 // =====================================================================================================================
 
 
-#endif //LARGEINT_LARGE_INT_8_IMPL_HPP
+#endif //LARGE_INT_DETAILS_MEMBER_8_HPP

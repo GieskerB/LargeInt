@@ -1,5 +1,5 @@
-#ifndef LARGEINT_BRANCH_SIDE_HPP
-#define LARGEINT_BRANCH_SIDE_HPP
+#ifndef LARGE_INT_DETAILS_BRANCH_SIDE_HPP
+#define LARGE_INT_DETAILS_BRANCH_SIDE_HPP
 
 #include <cstdint>
 
@@ -18,4 +18,4 @@ enum class branch_side_t : int8_t {
     ROOT = 0
 };
 
-#endif //LARGEINT_BRANCH_SIDE_HPP
+#endif //LARGE_INT_DETAILS_BRANCH_SIDE_HPP

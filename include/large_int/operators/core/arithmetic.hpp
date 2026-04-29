@@ -1,17 +1,7 @@
-#ifndef LARGEINT_GENERAL_ARITHMETIC_HPP
-#define LARGEINT_GENERAL_ARITHMETIC_HPP
+#ifndef LARGE_INT_OPERATORS_CORE_ARITHMETIC_HPP
+#define LARGE_INT_OPERATORS_CORE_ARITHMETIC_HPP
 
-#include "../details/burnikel_ziegler.hpp"
-
-template<uint16_t N>
-LargeInt<N> LargeInt<N>::operator+() const {
-    return *this;
-}
-
-template<uint16_t N>
-LargeInt<N> LargeInt<N>::operator-() const {
-    throw std::runtime_error("Can not invert LargeInt due to being unsigned");
-}
+#include "large_int/details/burnikel_ziegler.hpp"
 
 template<uint16_t N>
 LargeInt<N> LargeInt<N>::operator+(const LargeInt<N> &other) const {
@@ -138,4 +128,4 @@ LargeInt<N> LargeInt<N>::operator>>(uint16_t shift) const {
     return res;
 }
 
-#endif //LARGEINT_GENERAL_ARITHMETIC_HPP
+#endif //LARGE_INT_OPERATORS_CORE_ARITHMETIC_HPP

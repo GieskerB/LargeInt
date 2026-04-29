@@ -1,5 +1,5 @@
-#ifndef LARGEINT_GENERAL_ASSIGNMENT_HPP
-#define LARGEINT_GENERAL_ASSIGNMENT_HPP
+#ifndef LARGE_INT_OPERATORS_CORE_ASSIGNMENT_HPP
+#define LARGE_INT_OPERATORS_CORE_ASSIGNMENT_HPP
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &copy) {
@@ -101,4 +101,4 @@ LargeInt<N> &LargeInt<N>::operator>>=(uint16_t shift) {
 }
 
 
-#endif //LARGEINT_GENERAL_ASSIGNMENT_HPP
+#endif //LARGE_INT_OPERATORS_CORE_ASSIGNMENT_HPP

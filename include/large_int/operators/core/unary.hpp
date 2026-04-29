@@ -1,5 +1,15 @@
-#ifndef LARGEINT_UNARY_HPP
-#define LARGEINT_UNARY_HPP
+#ifndef LARGE_INT_OPERATORS_CORE_UNARY_HPP
+#define LARGE_INT_OPERATORS_CORE_UNARY_HPP
+
+template<uint16_t N>
+LargeInt<N> LargeInt<N>::operator+() const {
+    return *this;
+}
+
+template<uint16_t N>
+LargeInt<N> LargeInt<N>::operator-() const {
+    throw std::runtime_error("Can not invert LargeInt due to being unsigned");
+}
 
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator++() {
@@ -28,4 +38,4 @@ LargeInt<N> LargeInt<N>::operator--(int) {
     return res;
 }
 
-#endif //LARGEINT_UNARY_HPP
+#endif //LARGE_INT_OPERATORS_CORE_UNARY_HPP

@@ -1,5 +1,5 @@
-#ifndef LARGEINT_GENERAL_COMPARISON_HPP
-#define LARGEINT_GENERAL_COMPARISON_HPP
+#ifndef LARGE_INT_OPERATORS_CORE_COMPARISON_HPP
+#define LARGE_INT_OPERATORS_CORE_COMPARISON_HPP
 
 template<uint16_t N>
 bool LargeInt<N>::operator==(const LargeInt<N> &other) const {
@@ -16,4 +16,4 @@ std::strong_ordering LargeInt<N>::operator<=>(const LargeInt<N> &other) const {
     return ordering;
 }
 
-#endif //LARGEINT_GENERAL_COMPARISON_HPP
+#endif //LARGE_INT_OPERATORS_CORE_COMPARISON_HPP
