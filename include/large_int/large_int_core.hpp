@@ -52,8 +52,6 @@ public:
     bool was_underflow();
 
     // arithmetic
-    LargeInt<N> operator+() const;
-    LargeInt<N> operator-() const;
     LargeInt<N> operator+(const LargeInt<N> &) const;
     LargeInt<N> operator-(const LargeInt<N> &) const;
     LargeInt<2*N> operator*(const LargeInt<N> &) const;

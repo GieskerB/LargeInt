@@ -101,23 +101,6 @@ public:
      * @brief Standard mathematical and bitwise operations.
      * @{
      */
-    /**
-     * @brief Turns this number positive.
-     * @note It is already positive - by design. Function has not effect.
-     * @return this object.
-     */
-    LargeInt<8> operator+() const;
-    /**
-     * @brief Inverts the LargeInt.
-     * @note Inverting a unsigned value is not possible. This will therefore, thrown an exception.
-     * @exception std::runtime_error
-     */
-    LargeInt<8> operator-() const;
-    /**
-     * @brief Add this with another LargeInt.
-     * @param other Right addend of calculation.
-     * @return new LargeInt object that contains the sum.
-     */
     LargeInt<8> operator+(const LargeInt<8> &) const;
     /**
      * @brief Subtracts another LargeInt from this.
