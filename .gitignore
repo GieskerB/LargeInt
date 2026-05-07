@@ -4,5 +4,6 @@
 docs/html
 docs/latex
 
-tests/lib/googletest-1.17.0
+tests/lib/googletest*
+tests/lib/gtest*
 cmake-build-debug/
