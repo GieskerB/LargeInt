@@ -74,7 +74,7 @@ public:
     LargeInt(const LargeInt<8> &);
 
     /**
-     * @breif String constructor. Initializes Large in based on numeric value in string.
+     * @brief String constructor. Initializes Large in based on numeric value in string.
      * @param str_repr String representation of the number in base 10.
      * Useless for LargeInt<8> due to storage limit up to 255 which can be initialized with standard constructor.
      */
@@ -100,6 +100,11 @@ public:
      * @name Arithmetic Operators
      * @brief Standard mathematical and bitwise operations.
      * @{
+     */
+    /**
+     * @brief Add this with another LargeInt.
+     * @param other Right addend of calculation.
+     * @return new LargeInt object that contains the sum.
      */
     LargeInt<8> operator+(const LargeInt<8> &) const;
     /**
@@ -158,17 +163,9 @@ public:
      * @return new LargeInt object that contains the result.
      */
     LargeInt<8> operator^(const LargeInt<8> &) const;
-    /**
-     * @brief Left bitshift. Shift the bits in the number left by the number provided as an argument.
-     * @param shift Number of bits, the entire number is moved to the left.
-     * @return new LargeInt object that contains the result.
-     */
+    /** @bitshift{Left, left} */
     LargeInt<8> operator<<(uint16_t) const;
-    /**
-     * @brief Right bitshift. Shift the bits in the number right by the number provided as an argument.
-     * @param shift Number of bits, the entire number is moved to the right.
-     * @return new LargeInt object that contains the result.
-     */
+    /** @bitshift{Right, right} */
     LargeInt<8> operator>>(uint16_t) const;
     /** @} */
 
