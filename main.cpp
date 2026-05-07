@@ -1,12 +1,16 @@
 #include <iostream>
-#include "large_int/LargeInt.hpp"
+
+#include "include/large_int/large_int.hpp"
 
 int main() {
 
-    LargeInt<64> li{12};
-    li <<= 11;
+    LargeInt<512> a {"340282366920938463463374607431768211455"};
+    LargeInt<512> b {"5"};
 
-    std::cout << li <<"|" << 24576 << std::endl;
+    auto c = a / b; //68056473384187692692674921486353642291
+    std::cout << "68056473384187692692674921486353642291\n";
+
+    std::cout << c << "\n";
 
     return 0;
 }

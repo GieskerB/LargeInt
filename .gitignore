@@ -1,5 +1,8 @@
 .idea/
+.vscode/
 
-CMakeLists.txt
-tests/lib/
+docs/html
+docs/latex
+
+tests/lib/googletest-1.17.0
 cmake-build-debug/
