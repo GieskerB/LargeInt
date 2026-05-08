@@ -167,6 +167,33 @@ public:
     /** @postfix{decrement, Decreases} */
     LargeInt<N> operator--(int);
     /** @} */
+
+    /**
+     * @brief type cast to uint64.
+     * @return uint64 representation of this number.
+     */
+    explicit operator uint64_t() const {
+        if(N > 64) {
+            return m_lower.operator uint64_t;
+        }
+        switch(N) {
+            case 64:
+                const auto upper = m_upper.operator uint64_t;
+                const auto lower = m_lower.operator uint64_t;
+                return (upper << 32) | lower;
+            case 32:
+                const auto upper = m_upper.operator uint64_t;
+                const auto lower = m_lower.operator uint64_t;
+                return (upper << 16) | lower;
+            case 16:
+                const auto upper = m_upper.operator uint64_t;
+                const auto lower = m_lower.operator uint64_t;
+                return (upper << 8) | lower;
+            default :
+                // Should never reach this!
+                return 0;
+        }
+    }
 };
 
 #include "details/member_core.hpp"
