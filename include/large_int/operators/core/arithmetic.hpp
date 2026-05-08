@@ -17,15 +17,12 @@ LargeInt<N> LargeInt<N>::operator-(const LargeInt<N> &other) const {
     return res;
 }
 
-/**
+/*
  * Karatsuba multiplication: Divide and conquer.
  * X×Y = (X_H×Y_H) ≪ 128 + ( (X_L×YH) + (X_H×Y_L) ) ≪ 64 + (X_L×Y_L)
  * => 4 mults, 3 adds, 2 shifts (BAD)
  * X×Y = (X_H×Y_H) ≪ 128 + ( (X_H + X_L)(Y_H + Y_L) − (X_H×Y_H) − (X_L×Y_L) ) ≪ 64 + (X_L×Y_L)
  * => 3 mults, 6 adds, 2 shifts (GOOD)
- *
- * @param other
- * @return
  */
 template<uint16_t N>
 LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
@@ -73,7 +70,7 @@ LargeInt<2 * N> LargeInt<N>::operator*(const LargeInt<N> &other) const {
     return result;
 }
 
-// TODO Division: Burnikel-Ziegler Algorithm
+// Burnikel-Ziegler Algorithm
 // https://pure.mpg.de/rest/items/item_1819444_4/component/file_2599480/content
 template<uint16_t N>
 LargeInt<N> LargeInt<N>::operator/(const LargeInt<N> &other) const {

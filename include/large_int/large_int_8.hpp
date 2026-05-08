@@ -1,4 +1,4 @@
-#ifndef LARGE_INT_8_HPP
+ #ifndef LARGE_INT_8_HPP
 #define LARGE_INT_8_HPP
 
 #include <compare>
@@ -64,6 +64,7 @@ public:
 
     /**
      * @brief Standard constructor. Initializes LargeInt with number between 0 and 255.
+     * @param init_value Initial value of the LargeInt
      */
     LargeInt(uint8_t);
 
@@ -101,71 +102,37 @@ public:
      * @brief Standard mathematical and bitwise operations.
      * @{
      */
-    /**
-     * @brief Add this with another LargeInt.
-     * @param other Right addend of calculation.
-     * @return new LargeInt object that contains the sum.
-     */
+    /** @add{new} */
     LargeInt<8> operator+(const LargeInt<8> &) const;
-    /**
-     * @brief Subtracts another LargeInt from this.
-     * @param other Subtrahend of calculation.
-     * @return new LargeInt object that contains the difference.
-     */
+
+    /** @subtract{new} */
     LargeInt<8> operator-(const LargeInt<8> &) const;
-    /**
-     * @brief Multiplies this with another LargeInt.
-     * @note This operation returns a LargeInt<16> to prevent overflow.
-     * For better efficiency this operator used the Karatsuba multiplication with a time complexity in
-     * O(n^(1.585)). Compared to the standard school book complexity of O(n^2).
-     * @param other Right factor of calculation.
-     * @return new LargeInt object that contains the product.
-     */
+
+    /** @multiply{new}] */
     LargeInt<16> operator*(const LargeInt<8> &) const;
-    /**
-     * @brief Divides this with another LargeInt for the integer quotient.
-     * For better efficiency this operator used the Burnikel-Ziegler division. Need to support division even for very
-     * LargeInts
-     * @exception std::exception Thrown if other is zero.
-     * @param other Divisor of calculation.
-     * @return new LargeInt object that contains the integer quotient.
-     */
+
+    /** @divide{quotient, new} */
     LargeInt<8> operator/(const LargeInt<8> &) const;
-    /**
-     * @brief Divides this with another LargeInt for the integer remainder.
-     * For better efficiency this operator used the Burnikel-Ziegler division. Need to support division even for very
-     * LargeInts
-     * @exception std::exception Thrown if other is zero.
-     * @param other Divisor of calculation.
-     * @return new LargeInt object that contains the integer remainder.
-     */
+
+    /** @divide{remainder, new} */
     LargeInt<8> operator%(const LargeInt<8> &) const;
-    /**
-     * @brief Bitwise NOT. Inverts all bits int he number.
-     * @return new LargeInt object that contains the result.
-     */
+
+    /** @bitwiseNot{new} */
     LargeInt<8> operator~() const;
-    /**
-     * @brief Bitwise AND. Logically ands every bits with the respective bit from the other LargeInt.
-     * @param other Right hand-side of the operation.
-     * @return new LargeInt object that contains the result.
-     */
+
+    /** @bitwise{AND, ands, new} */
     LargeInt<8> operator&(const LargeInt<8> &) const;
-    /**
-     * @brief Bitwise OR. Logically ors every bits with the respective bit from the other LargeInt.
-     * @param other Right hand-side of the operation.
-     * @return new LargeInt object that contains the result.
-     */
+
+    /** @bitwise{OR, ors, new} */
     LargeInt<8> operator|(const LargeInt<8> &) const;
-    /**
-     * @brief Bitwise XOR. Logically xors every bits with the respective bit from the other LargeInt.
-     * @param other Right hand-side of the operation.
-     * @return new LargeInt object that contains the result.
-     */
+
+    /** @bitwise{XOR, xors, new} */
     LargeInt<8> operator^(const LargeInt<8> &) const;
-    /** @bitshift{Left, left} */
+
+    /** @bitshift{Left, left, new} */
     LargeInt<8> operator<<(uint16_t) const;
-    /** @bitshift{Right, right} */
+
+    /** @bitshift{Right, right, new} */
     LargeInt<8> operator>>(uint16_t) const;
     /** @} */
 
@@ -176,80 +143,37 @@ public:
      * @brief Standard mathematical and bitwise operations.
      * @{
      */
-    /**
-     * @brief Assigns this LargeInt to other. Implicitly copying the object.
-     * @param other LargeInt which values are assigned to this.
-     * @return this LargeInt object containing the copy
-     */
+     /** @assign */
     LargeInt<8> &operator=(const LargeInt<8> &);
-    /**
-     * @brief Add this with another LargeInt.
-     * @param other Right addend of calculation.
-     * @return this LargeInt object containing the sum.
-     */
+
+    /** @add{this} */
     LargeInt<8> &operator+=(const LargeInt<8> &);
-    /**
-     * @brief Subtracts another LargeInt from this.
-     * @param other Subtrahend of calculation.
-     * @return this LargeInt object containing the difference.
-     */
+
+    /** @subtract{this} */
     LargeInt<8> &operator-=(const LargeInt<8> &);
-    /**
-     * @brief Multiplies this with another LargeInt.
-     * @note This operation returns a LargeInt<16> to prevent overflow.
-     * For better efficiency this operator used the Karatsuba multiplication with a time complexity in
-     * O(n^(1.585)). Compared to the standard school book complexity of O(n^2).
-     * @param other Right factor of calculation.
-     * @return this LargeInt object containing the product.
-     */
+
+    /** @multiply{this}] */
     LargeInt<8> &operator*=(const LargeInt<8> &);
-    /**
-     * @brief Divides this with another LargeInt for the integer quotient.
-     * For better efficiency this operator used the Burnikel-Ziegler division. Need to support division even for very
-     * LargeInts
-     * @exception std::exception Thrown if other is zero.
-     * @param other Divisor of calculation.
-     * @return this LargeInt object containing the integer quotient.
-     */
+
+    /** @divide{quotient, this} */
     LargeInt<8> &operator/=(const LargeInt<8> &);
-    /**
-     * @brief Divides this with another LargeInt for the integer remainder.
-     * For better efficiency this operator used the Burnikel-Ziegler division. Need to support division even for very
-     * LargeInts
-     * @exception std::exception Thrown if other is zero.
-     * @param other Divisor of calculation.
-     * @return this LargeInt object containing the integer remainder.
-     */
+
+    /** @divide{remainder, this} */
     LargeInt<8> &operator%=(const LargeInt<8> &);
-    /**
-     * @brief Bitwise AND. Logically ands every bits with the respective bit from the other LargeInt.
-     * @param other Right hand-side of the operation.
-     * @return this LargeInt object containing the result.
-     */
+
+    /** @bitwise{AND, ands, this} */
     LargeInt<8> &operator&=(const LargeInt<8> &);
-    /**
-     * @brief Bitwise OR. Logically ors every bits with the respective bit from the other LargeInt.
-     * @param other Right hand-side of the operation.
-     * @return this LargeInt object containing the result.
-     */
+
+    /** @bitwise{OR, ors, this} */
     LargeInt<8> &operator|=(const LargeInt<8> &);
-    /**
-     * @brief Bitwise XOR. Logically xors every bits with the respective bit from the other LargeInt.
-     * @param other Right hand-side of the operation.
-     * @return this LargeInt object containing the result.
-     */
+
+    /** @bitwise{XOR, xors, this} */
     LargeInt<8> &operator^=(const LargeInt<8> &);
-    /**
-     * @brief Left bitshift. Shift the bits in the number left by the number provided as an argument.
-     * @param shift Number of bits, the entire number is moved to the left.
-     * @return this LargeInt object containing the result.
-     */
+
+    /** @bitshift{Left, left, this} */
     LargeInt<8> &operator<<=(uint16_t);
-    /**
-     * @brief Right bitshift. Shift the bits in the number right by the number provided as an argument.
-     * @param shift Number of bits, the entire number is moved to the right.
-     * @return this LargeInt object containing the result.
-     */
+
+    /** @bitshift{Right, right, this} */
     LargeInt<8> &operator>>=(uint16_t);
     /** @} */
 
@@ -260,20 +184,10 @@ public:
      * @brief Standard mathematical and bitwise operations.
      * @{
      */
-    /**
-     * @brief Equal comparison operator. Used to compare LargeInt for equality.
-     * @param other LargeInt to compare this to.
-     * Implicitly generate operator!= automatically by C++
-     * @return true if both LargeInts have the same numeric value.
-     */
+    /** @compareEqual */
     bool operator==(const LargeInt<8> &) const;
-    /**
-     * @brief Spaceship operator. Implicitly generates all 4 unequal comparison operators automatically.
-     * @param other LargeInt to compare this to.
-     * Strong ordering provides a strict total ordering where equal values are logically indistinguishable and
-     * substitutable. The normal operator>= etc. exist at compile time and can therefore be used by the programmer.
-     * @return Strong ordering object. The "standard" operators return a boolean as expected.
-     */
+
+    /** @compareSpaceship */
     std::strong_ordering operator<=>(const LargeInt<8> &) const;
     /** @} */
 
@@ -284,29 +198,16 @@ public:
      * @brief Standard mathematical and bitwise operations.
      * @{
      */
-    /**
-     * @brief Prefix increment operator.
-     * Increases value by one BEFORE reading the value
-     * @return new LargeInt object that contains the new value.
-     */
+    /** @prefix{increment, Increases} */
     LargeInt<8> &operator++();
-    /**
-     * @brief Prefix decrement operator.
-     * Decreases value by one BEFORE reading the value
-     * @return new LargeInt object that contains the new value.
-     */
+
+    /** @prefix{decrement, Decreases} */
     LargeInt<8> &operator--();
-    /**
-     * @brief Postfix increment operator.
-     * Increases value by one AFTER reading the value
-     * @return new LargeInt object that contains the value before increment.
-     */
+
+    /** @postfix{increment, Increases} */
     LargeInt<8> operator++(int);
-    /**
-     * @brief Postfix increment operator.
-     * Decreases value by one AFTER reading the value
-     * @return new LargeInt object that contains the value before decrement.
-     */
+
+    /** @postfix{decrement, Decreases} */
     LargeInt<8> operator--(int);
     /** @} */
 

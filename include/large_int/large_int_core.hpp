@@ -51,41 +51,122 @@ public:
     bool was_overflow();
     bool was_underflow();
 
-    // arithmetic
+    // =================================================================================================================
+
+
+    /**
+     * @name Arithmetic Operators
+     * @brief Standard mathematical and bitwise operations.
+     * @{
+     */
+    /** @add{new} */
     LargeInt<N> operator+(const LargeInt<N> &) const;
+
+    /** @subtract{new} */
     LargeInt<N> operator-(const LargeInt<N> &) const;
+
+    /** @multiply{new}] */
     LargeInt<2*N> operator*(const LargeInt<N> &) const;
+
+    /** @divide{quotient, new} */
     LargeInt<N> operator/(const LargeInt<N> &) const;
+
+    /** @divide{remainder, new} */
     LargeInt<N> operator%(const LargeInt<N> &) const;
+
+    /** @bitwiseNot{new} */
     LargeInt<N> operator~() const;
+
+    /** @bitwise{AND, ands, new} */
     LargeInt<N> operator&(const LargeInt<N> &) const;
+
+    /** @bitwise{OR, ors, new} */
     LargeInt<N> operator|(const LargeInt<N> &) const;
+
+    /** @bitwise{XOR, xors, new} */
     LargeInt<N> operator^(const LargeInt<N> &) const;
+
+    /** @bitshift{Left, left, new} */
     LargeInt<N> operator<<(uint16_t) const;
+
+    /** @bitshift{Right, right, new} */
     LargeInt<N> operator>>(uint16_t) const;
+    /** @} */
 
-    // assignment
+    // =================================================================================================================
+
+    /**
+     * @name Assignment Operators
+     * @brief Standard mathematical and bitwise operations.
+     * @{
+     */
+    /** @assign */
     LargeInt<N> &operator=(const LargeInt &);
+
+    /** @add{this} */
     LargeInt<N> &operator+=(const LargeInt<N> &);
+
+    /** @subtract{this} */
     LargeInt<N> &operator-=(const LargeInt<N> &);
+
+    /** @multiply{this}] */
     LargeInt<N> &operator*=(const LargeInt<N> &);
+
+    /** @divide{quotient, this} */
     LargeInt<N> &operator/=(const LargeInt<N> &);
+
+    /** @divide{remainder, this} */
     LargeInt<N> &operator%=(const LargeInt<N> &);
+
+    /** @bitwise{AND, ands, this} */
     LargeInt<N> &operator&=(const LargeInt<N> &);
+
+    /** @bitwise{OR, ors, this} */
     LargeInt<N> &operator|=(const LargeInt<N> &);
+
+    /** @bitwise{XOR, xors, this} */
     LargeInt<N> &operator^=(const LargeInt<N> &);
+
+    /** @bitshift{Left, left, this} */
     LargeInt<N> &operator<<=(uint16_t);
+
+    /** @bitshift{Right, right, this} */
     LargeInt<N> &operator>>=(uint16_t);
+    /** @} */
 
-    // comparison
+    // =================================================================================================================
+
+    /**
+     * @name Comparison Operators
+     * @brief Standard mathematical and bitwise operations.
+     * @{
+     */
+    /** @compareEqual */
     bool operator==(const LargeInt<N> &) const;
-    std::strong_ordering operator<=>(const LargeInt<N> &) const;
 
-    // in- / decrement
+    /** @compareSpaceship */
+    std::strong_ordering operator<=>(const LargeInt<N> &) const;
+    /** @} */
+
+    // =================================================================================================================
+
+    /**
+     * @name In- / Decrement Operators
+     * @brief Standard mathematical and bitwise operations.
+     * @{
+     */
+    /** @prefix{increment, Increases} */
     LargeInt<N> &operator++();
+
+    /** @prefix{decrement, Decreases} */
     LargeInt<N> &operator--();
+
+    /** @postfix{increment, Increases} */
     LargeInt<N> operator++(int);
+
+    /** @postfix{decrement, Decreases} */
     LargeInt<N> operator--(int);
+    /** @} */
 };
 
 #include "details/member_core.hpp"

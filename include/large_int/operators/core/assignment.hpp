@@ -2,15 +2,15 @@
 #define LARGE_INT_OPERATORS_CORE_ASSIGNMENT_HPP
 
 template<uint16_t N>
-LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &copy) {
-    if (&copy == this) {
+LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &other) {
+    if (&other == this) {
         return *this;
     }
-    m_upper = copy.m_upper;
-    m_lower = copy.m_lower;
-    m_overflown = copy.m_overflown;
-    m_underflown = copy.m_underflown;
-    const_cast<branch_side_t &>(c_branch_side) = copy.c_branch_side;
+    m_upper = other.m_upper;
+    m_lower = other.m_lower;
+    m_overflown = other.m_overflown;
+    m_underflown = other.m_underflown;
+    const_cast<branch_side_t &>(c_branch_side) = other.c_branch_side;
     initialize_pointers(nullptr);
     return *this;
 }
