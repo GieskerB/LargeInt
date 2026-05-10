@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_OPERATORS_8_ASSIGNMENT_HPP
 #define LARGE_INT_OPERATORS_8_ASSIGNMENT_HPP
 
+/** @file assignment.hpp */
+
 inline LargeInt<8> &LargeInt<8>::operator=(const LargeInt<8> &other) {
     m_value = other.m_value;
     m_overflown = other.m_overflown;
@@ -64,8 +66,6 @@ inline LargeInt<8> &LargeInt<8>::operator^=(const LargeInt<8> &other) {
     m_value ^= other.m_value;
     return *this;
 }
-
-extern LargeInt<32> c;
 
 inline LargeInt<8> &LargeInt<8>::operator<<=(const uint16_t shift) {
     if (shift == 0) return *this;

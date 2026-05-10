@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_DETAILS_MEMBER_CORE_HPP
 #define LARGE_INT_DETAILS_MEMBER_CORE_HPP
 
+/** @file member_core.hpp */
+
 template<uint16_t N>
 LargeInt<N>::LargeInt() : LargeInt<N>{0} {
 }

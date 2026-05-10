@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_OPERATORS_CORE_ASSIGNMENT_HPP
 #define LARGE_INT_OPERATORS_CORE_ASSIGNMENT_HPP
 
+/** @file assignment.hpp */
+
 template<uint16_t N>
 LargeInt<N> &LargeInt<N>::operator=(const LargeInt<N> &other) {
     if (&other == this) {

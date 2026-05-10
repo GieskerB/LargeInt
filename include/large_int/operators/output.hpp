@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_OPERATORS_CORE_OUTPUT_HPP
 #define LARGE_INT_OPERATORS_CORE_OUTPUT_HPP
 
+/** @file output.hpp */
+
 #include <cstdint>
 #include <ostream>
 #include <iomanip>

@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_OPERATORS_8_ARITHMETIC_HPP
 #define LARGE_INT_OPERATORS_8_ARITHMETIC_HPP
 
+/** @file arithmetic.hpp */
+
 inline LargeInt<8> LargeInt<8>::operator+(const LargeInt<8> &other) const {
     LargeInt<8> res{*this};
     res += other;

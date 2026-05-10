@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_DETAILS_MEMBER_8_HPP
 #define LARGE_INT_DETAILS_MEMBER_8_HPP
 
+/** @file member_8.hpp */
+
 #include "../large_int_8.hpp"
 #include "../large_int_core.hpp"
 

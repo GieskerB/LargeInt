@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_OPERATORS_CORE_COMPARISON_HPP
 #define LARGE_INT_OPERATORS_CORE_COMPARISON_HPP
 
+/** @file comparison.hpp */
+
 template<uint16_t N>
 bool LargeInt<N>::operator==(const LargeInt<N> &other) const {
     return std::is_eq(*this <=> other);

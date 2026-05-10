@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_DETAILS_BRANCH_SIDE_HPP
 #define LARGE_INT_DETAILS_BRANCH_SIDE_HPP
 
+/** @file branch_side.hpp */
+
 #include <cstdint>
 
 /**

@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_DETAILS_BURNIKEL_ZIEGLER_HPP
 #define LARGE_INT_DETAILS_BURNIKEL_ZIEGLER_HPP
 
+/** @file burnikel_ziegler.hpp */
+
 #include "../large_int.hpp"
 
 namespace bz_algo {

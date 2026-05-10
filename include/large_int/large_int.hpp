@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_HPP
 #define LARGE_INT_HPP
 
+/** @file large_int.hpp */
+
 #include <cstdint>
 
 template<uint16_t N>

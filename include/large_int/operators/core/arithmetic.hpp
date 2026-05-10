@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_OPERATORS_CORE_ARITHMETIC_HPP
 #define LARGE_INT_OPERATORS_CORE_ARITHMETIC_HPP
 
+/** @file arithmetic.hpp */
+
 #include "large_int/details/burnikel_ziegler.hpp"
 
 template<uint16_t N>
