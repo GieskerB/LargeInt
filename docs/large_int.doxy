@@ -205,6 +205,19 @@ TAB_SIZE               = 4
 # @} or use a double escape (\\{ and \\})
 
 ALIASES                =
+ALIASES += "constructDef=\brief Default constructor. Initializes LargeInt with 0."
+ALIASES += "constructInt=\brief Standard constructor. Initializes LargeInt with number between 0 and 255. \
+            \param init_value Initial value of the LargeInt."
+ALIASES += "constructCopy=\brief Copy constructor. \
+            \param copy Instance that is copied."
+ALIASES += "constructStr=\brief String constructor. Initializes Large in based on numeric value in string. \
+            \param str_repr String representation of the number in base 10."
+ALIASES += "overflown=\brief Check if last addition lead to an overflow. \
+            Automatically resets information after calling this function. \
+            \return true if addition resulted in an overflow."
+ALIASES += "underflown=\brief Check if last subtraction lead to an underflow. \
+            Automatically resets information after calling this function. \
+            \return true if subtraction resulted in an underflow."
 ALIASES += "add{1}=\brief Adds this with another LargeInt. \
             \param other Right addend of calculation. \
             @return \1 LargeInt object that contains the sum."
@@ -246,7 +259,6 @@ ALIASES += "prefix{2}=\brief Prefix \1 operator. \
 ALIASES += "postfix{2}=\brief Postfix \1 operator. \
             \2 value by one AFTER reading the value. \
             @return new LargeInt object that contains the value before \1."
-
 
 
 
