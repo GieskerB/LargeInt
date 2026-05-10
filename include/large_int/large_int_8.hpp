@@ -1,5 +1,7 @@
- #ifndef LARGE_INT_8_HPP
+#ifndef LARGE_INT_8_HPP
 #define LARGE_INT_8_HPP
+
+/** @file large_int_8.hpp */
 
 #include <compare>
 #include <string>
@@ -11,15 +13,14 @@
 /**
  * @brief Base class of recursive class design.
  * @tparam N number of bits. Set to 8.
- * The recursive design must stop at some point. Using 8 Bit as the smallest type ensures, that this can run on any
- * hardware supporting 16 bit arithmetic. Therefore, the usage of small LargeInts with 8 or 16 bits is supported.
+ * The recursive design must stop at some point. Using 8 Bit as the smallest type ensures, that this can run on any hardware supporting 16 bit arithmetic. Therefore, the usage of small LargeInts with 8 or 16 bits is supported.
  */
 template<>
 class LargeInt<8> {
 
     // Friend declarations:
     template<uint16_t M> friend
-    class LargeInt; // This is the "big brother". Large recursive structure.
+    class LargeInt; // This is the "big brother".
     friend void output_hex(std::ostream &, const LargeInt<8> &, const uint16_t);
     friend void output_bin(std::ostream &, const LargeInt<8> &, const uint16_t);
     friend uint64_t to_decimal(const LargeInt<8> &);
@@ -57,42 +58,24 @@ class LargeInt<8> {
 
 public:
 
-    /**
-     * @brief Default constructor. Initializes LargeInt with 0.
-     */
+    /** @constructDef */
     LargeInt();
 
-    /**
-     * @brief Standard constructor. Initializes LargeInt with number between 0 and 255.
-     * @param init_value Initial value of the LargeInt
-     */
+    /** @constructInt*/
     LargeInt(uint8_t);
 
-    /**
-     * @brief Copy constructor.
-     * @param copy Instance that is copied.
-     */
+    /** @constructCopy */
     LargeInt(const LargeInt<8> &);
 
     /**
-     * @brief String constructor. Initializes Large in based on numeric value in string.
-     * @param str_repr String representation of the number in base 10.
+     * @constructStr
      * Useless for LargeInt<8> due to storage limit up to 255 which can be initialized with standard constructor.
      */
     explicit LargeInt(const std::string &);
 
-    /**
-     * @brief Check if last addition lead to an overflow.
-     * Automatically resets information after calling this function.
-     * @return true if addition resulted in an overflow.
-     */
+    /** @overflown */
     bool was_overflow();
-
-    /**
-     * @brief Check if last subtraction lead to an underflow.
-     * Automatically resets information after calling this function.
-     * @return true if subtraction resulted in an underflow.
-     */
+    /** @underflown */
     bool was_underflow();
 
     // =================================================================================================================

@@ -1,6 +1,8 @@
 #ifndef LARGE_INT_CORE_HPP
 #define LARGE_INT_CORE_HPP
 
+/** @file large_int_core.hpp */
+
 namespace bz_algo {
     template<uint16_t N>
     std::pair<LargeInt<N/2>, LargeInt<N/2>> div_2n_1n(const LargeInt<N>& A, const LargeInt<N/2>& B);
@@ -12,9 +14,15 @@ namespace bz_algo {
     std::pair<LargeInt<N>, LargeInt<N>> div_mod_bz(const LargeInt<N>& numerator, const LargeInt<N>& denominator);
 }
 
+/**
+ * @brief Larger class of recursive class design.
+ * @tparam N number of bits equal to a power of two withing uint16 limit.
+ */
 template<uint16_t N>
 class LargeInt {
-    template<uint16_t M> friend class LargeInt;
+
+    // Friend declarations:
+    template<uint16_t M> friend class LargeInt; // This is "another brother".
     friend uint64_t to_decimal(const LargeInt<16>&);
     friend uint64_t to_decimal(const LargeInt<32>&);
     friend uint64_t to_decimal(const LargeInt<64>&);
@@ -28,27 +36,51 @@ class LargeInt {
     static_assert(N >= 8 , "LargeInt size must be at least one byte in size");
     static_assert((N & (N - 1)) == 0, "LargeInt size must be a power of 2 for recursive splitting");
 
+    /// Stores two instances of LargeInt with half the size, to create the recursive data structure.
     LargeInt<N / 2> m_upper, m_lower;
+
+    /// Temporal values used to make addition and subtraction easier.
     bool m_overflown, m_underflown;
+
+    /// Remembers if instance is the upper or lower part of parent instance.
     const branch_side_t c_branch_side;
 
+    /// For easier traversal in huge LargeInts, an instance stores a pointer to its parent.
     LargeInt<2 * N> *p_parent;
 
+    /// Only used internal. Called by bigger LargeInts to parse the branching direction.
     LargeInt(uint8_t, branch_side_t);
     LargeInt(const LargeInt<N / 2> &);
     LargeInt(const LargeInt<N / 2> &, int);
     LargeInt(const LargeInt<N / 2> &,const LargeInt<N / 2> &);
 
+    /**
+     * @brief Called at the very end of the constructor. Needed to setup left, right and parent pointers.
+     * @param parent point to the parent (very clear).
+     * @param pp_last_leaf pointer to pointer to last leaf. Extra pointer needed for correct behaviour. After reading set pointer pointer to 'this'.
+     */
     void initialize_pointers(LargeInt<2 * N> * = nullptr, LargeInt<8>** = nullptr);
+
+    /// Efficient multiply by 10 + carry operator for reading strings. Faster then Karatsuba -> O(n)
     void multiply_by_ten(uint8_t carry = 0);
 
 public:
+
+    /** @constructDef */
     LargeInt();
+
+    /** @constructInt*/
     LargeInt(uint8_t);
+
+    /** @constructCopy */
     LargeInt(const LargeInt &);
+
+    /** @constructStr */
     explicit LargeInt (const std::string&);
 
+    /** @overflown */
     bool was_overflow();
+    /** @underflown */
     bool was_underflow();
 
     // =================================================================================================================
